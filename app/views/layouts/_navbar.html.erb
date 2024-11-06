@@ -1,0 +1,105 @@
+<head>
+  <%= stylesheet_link_tag 'application', media: :all, rel: 'stylesheet' %>
+
+  <style>
+
+      @font-face {
+      font-family: 'Keep Calm Medium';
+      src: url('fonts/KeepCalm-Medium'); /* Replace with actual font file path */
+      font-weight: bold;
+      font-style: normal;
+    }
+    body {
+      font-family: 'Keep Calm Medium', sans-serif; /* Fallback font */
+    }
+    .dropdown-toggle {
+      font-size: 100%; /* or desired size */
+    }
+
+    .container-fluid {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .nav-link-first {
+      margin-left: 25px;
+      margin-right: 50px;
+    }
+
+    .nav-link {
+      margin-left: 50px;
+      margin-right: 50px;
+    }
+    .nav-link-large {
+      font-size: 1.2rem;  /* Adjust font-size as desired */
+    }
+
+    .dropdown-menu-arial-black {
+      font-family: 'Arial', sans-serif; /* Specify the font family */
+    }
+
+  </style>
+</head>
+
+<nav class="navbar navbar-light" style="background-color: #0c66c6; ">
+  
+  <div class="container-fluid">
+
+    <div class="navbar-nav">
+      <a class="nav-link-first text-white nav-link-large" href="/">
+        Dashboard
+      </a>
+    </div>
+
+    <div class="navbar-nav">
+      <a class="nav-link text-white nav-link-large" href="/controllers">
+        Controladores
+      </a>
+    </div>
+
+    <div class="navbar-nav">
+      <a class="nav-link text-white nav-link-large" href="/models">
+        Modelos
+      </a>
+    </div>
+
+    <div class="dropdown ms-auto">
+    
+      <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-person-circle"></i>
+      </a>
+
+      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arial-black" aria-labelledby="userDropdown">  
+        
+        <% if user_signed_in?%>
+        
+          <li>
+            <%= link_to destroy_user_session_path, data: { turbo_confirm: 'Are you sure you want to Log out?', turbo_method: "delete" }, class: 'dropdown-item' do %>
+              <i class="bi bi-box-arrow-right"></i> 
+              Log out
+            <% end %>
+          </li>
+
+        <% else %>
+
+          <li>
+            <a class="dropdown-item" href="/users/sign_in">
+              <i class="bi bi-box-arrow-right"></i>
+              Log In
+            </a>
+          </li>
+          
+          <li>
+            <a class="dropdown-item" href="/users/sign_up">
+              <i class="bi bi-box-arrow-right"></i>
+              Sign Up
+            </a>
+          </li>
+
+        <% end %>
+      </ul>
+
+    </div>
+  </div>
+</nav>
