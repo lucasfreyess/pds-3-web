@@ -5,6 +5,15 @@ class User < ApplicationRecord
   :rememberable, :validatable, :trackable, :omniauthable, 
   omniauth_providers: [:google_oauth2]
 
+  has_many :controllers, class_name: "Controller"
+  has_many :lockers, through: :controllers
+
+  validates :email, presence: true, uniqueness: true
+  validates :password, presence: true
+  validates :name, presence: true
+  validates :is_admin, presence: true
+  
+
   #def self.from_omniauth(access_token)
   #  data = access_token.info
   #  user = User.where(email: data['email']).first
@@ -18,7 +27,7 @@ class User < ApplicationRecord
   #  end
   #  user
   #end
-
+  
   def self.from_omniauth(auth)
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
       user.email = auth.info.email
