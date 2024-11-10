@@ -2,6 +2,7 @@ class Controller < ApplicationRecord
 
   belongs_to :user, optional: true
   has_many :lockers, class_name: "Locker"
+  accepts_nested_attributes_for :lockers
 
   validates :name, presence: { message: "Name can't be blank" }
   #validates :esp32_mac_address, presence: { message: "ESP32 MAC Address can't be blank" }
@@ -21,10 +22,8 @@ class Controller < ApplicationRecord
     return unless user.model.present? #si el usuario no tiene modelo, no se puede cambiar las claves xd
     
     lockers.each do |locker|
-      
       gestures = user.model.gestures.sample(4) #creo q esto se puede hacer si es que hice los modelos bien!
       locker.update(password: gestures.map(&:name))
-
     end
 
     # lo siguiente no va a funcionar todavia pq MQTT_CLIENT no esta definido

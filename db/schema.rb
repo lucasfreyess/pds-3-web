@@ -82,6 +82,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_09_224046) do
     t.string "description", default: "", null: false
     t.string "url", default: "", null: false
     t.string "version", default: "", null: false
+    t.integer "gesture_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -92,8 +93,11 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_09_224046) do
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
+    t.integer "sign_in_count", default: 0, null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name", default: "", null: false

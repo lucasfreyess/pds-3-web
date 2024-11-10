@@ -1,16 +1,9 @@
 <div>
   <div style="text-align: center;">
     <br />
-    <% if @controllers.nil? %>
-      <h1>No tienes controladores...</h1>
-    <% else %>
-      <h1>Revisa tus controladores!</h1>
-    <% end %>
-    <br />
-    <a class="btn btn-success btn-lg" href="/controllers/available"> 
-      Agrega un Controlador
-    </a> 
-    
+    <h1>
+      Controladores disponibles!!
+    </h1>
   </div>
 
   <br />
@@ -27,8 +20,9 @@
           con <%= controller.locker_count %> casilleros.
         </p>
         
-        <%= link_to 'Ver', controller_path(controller), class: 'btn btn-info' %>
+        <%= button_to 'Añadir', assign_to_user_controller_path(controller), method: :patch, class: 'btn btn-primary' %>
       </div>
     </div>
   <% end %>
+    
 </div>

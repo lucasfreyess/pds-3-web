@@ -1,15 +1,25 @@
 
 <div>
+
+  <% if user_signed_in? %>
+    <h1>¡Hola, <%= current_user.email %>!</h1>
+  <% else %>
+    <h1>¡Hola, desconocido!</h1>
+  <% end %>
+
   <h1>Home#index</h1>
   <button class="btn btn-success"> Green Button </button> 
   <p>Find me in app/views/home/index.html.erb</p>
   <%= link_to "Iniciar sesión con Google", user_google_oauth2_omniauth_authorize_path %>
 
   <br>
-  <%= ENV['GOOGLE_CLIENT_ID'] %>
-  <br>
-  <%= ENV['GOOGLE_CLIENT_SECRET']%>
-
+  <p>
+    Google Client ID: <%= ENV['GOOGLE_CLIENT_ID'] %>
+    <br />
+    Google Client Secret: <%= ENV['GOOGLE_CLIENT_SECRET']%>
+  </p>
+  
+  
 
   <div class="card mx-auto" style="width: 18rem; ">
     <div class="card-body">

@@ -14,6 +14,8 @@ class Locker < ApplicationRecord
   #validates :open_count, presence: {message: "of locker must be present"}
   validates :controller_id, presence: {message: "of locker must be present"}
   
+  #validate :complete_gesture_set_if_any
+
   validate :print_errors
 
   def print_errors
@@ -40,5 +42,13 @@ class Locker < ApplicationRecord
       throw(:abort)
     end
   end
+
+  # Valida que si se modifica un gesto, se modifiquen los cuatro
+  #def complete_gesture_set_if_any
+  #  gestures = [gesture_1, gesture_2, gesture_3, gesture_4]
+  #  if gestures.any?(&:present?) && gestures.any?(&:blank?)
+  #    errors.add(:base, "Si modifica un gesto, debe modificar los cuatro.")
+  #  end
+  #end
 
 end

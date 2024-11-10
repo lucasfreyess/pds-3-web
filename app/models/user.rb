@@ -14,7 +14,7 @@ class User < ApplicationRecord
   validates :name, presence: {message: "of this user must be present"}
   validates :email, presence: {message: "of this user must be present"}, 
                     uniqueness: {message: "is already used. Aborting user creation."}
-  validates :password, presence: {message: "of this user must be present"}
+  validates :password, presence: {message: "of this user must be present"}, if: :password_required?
   #validates :is_admin, presence: {message: "of this user must be present"} 
   
   validate :print_errors
@@ -53,5 +53,9 @@ class User < ApplicationRecord
     if saved_change_to_model_id? #nose si esto es legal?!?!?
       controllers.each(&:regenerate_lockers_passwords_if_model_changed)
     end
+  end
+
+  def password_required?
+    new_record? || password.present?
   end
 end

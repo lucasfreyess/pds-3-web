@@ -6,6 +6,7 @@ class CreateModels < ActiveRecord::Migration[7.2]
       t.string :description, null: false, default: ""
       t.string :url, null: false, default: ""
       t.string :version, null: false, default: ""
+      t.integer :gesture_count, null: false, default: 0
 
       t.timestamps
     end

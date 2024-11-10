@@ -18,6 +18,11 @@ modelo_1 = Model.create!(
   description: 'Model 1 description'
 )
 
+modelo_2 = Model.create!(
+  name: 'Model 2',
+  description: 'Model 2 description'
+)
+
 user_1 = User.create!(
   name: 'Admin',
   email: 'lucas@gmail.com',
@@ -32,6 +37,12 @@ controller_1 = Controller.create!(
   user: user_1
 )
 
+# sin usuario para q salga en la vista de controladores disponibles!!
+controller_2 = Controller.create!(
+  name: 'Controller 2',
+  esp32_mac_address: '00:00:00:00:00:02',
+)
+
 4.times do |i|
 
   Locker.create!(
@@ -42,7 +53,17 @@ controller_1 = Controller.create!(
 
 end
 
-7.times do |i|
+3.times do |i|
+  
+  Locker.create!(
+    name: "Locker #{i+5}",
+    description: "Locker #{i+5} description",
+    controller: controller_2
+  )
+
+end
+
+6.times do |i|
 
   Gesture.create!(
     name: "Gesture #{i+1}",
@@ -51,5 +72,16 @@ end
   )
 
 end
+
+8.times do |i|
+
+  Gesture.create!(
+    name: "Gesture #{i+7}",
+    description: "Gesture #{i+7} description",
+    model: modelo_2
+  )
+
+end
+
 
 puts 'Seed finished!!'

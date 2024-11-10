@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
   
+  before_action :authenticate_user!
+
   def update
     @user = User.find(params[:id])
     if @user.update(user_params)
@@ -14,6 +16,11 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:name, :email, :model_id, :is_admin) # probablemente is_admin no vaya
+    params.require(:user).permit(
+      :name, 
+      :email, 
+      :model_id, 
+      :is_admin
+    ) # probablemente is_admin no vaya
   end
 end
