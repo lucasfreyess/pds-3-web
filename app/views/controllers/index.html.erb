@@ -1,2 +1,21 @@
 <h1>Controllers#index</h1>
-<p>Find me in app/views/controllers/index.html.erb</p>
+
+<% @controllers.each do |controller|%>
+  <div class="custom-card mx-auto">
+    <div class="card-body">
+      
+      <h5 class="custom-card-title">
+        <%= controller.name %>
+      </h5>
+      
+      <p class="custom-card-text">
+        con <%= controller.locker_count %> casilleros.
+      </p>
+      
+      <a href="#" class="btn btn-primary">
+        Go somewhere
+      </a>
+    </div>
+  </div>
+<% end %>
+

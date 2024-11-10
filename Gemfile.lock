@@ -164,6 +164,7 @@ GEM
     matrix (0.4.2)
     mini_mime (1.1.5)
     minitest (5.25.1)
+    mqtt (0.6.0)
     msgpack (1.7.3)
     multi_xml (0.7.1)
       bigdecimal (~> 3.1)
@@ -376,6 +377,7 @@ DEPENDENCIES
   dotenv-rails
   importmap-rails
   jbuilder
+  mqtt
   omniauth
   omniauth-google-oauth2
   pg (~> 1.1)

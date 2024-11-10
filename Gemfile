@@ -1,5 +1,7 @@
 source "https://rubygems.org"
 
+#mqtt!!
+gem 'mqtt'
 #bootstrap!!
 gem 'bootstrap', '~> 5.3.0'
 gem 'sassc-rails'
