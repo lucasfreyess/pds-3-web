@@ -1,12 +1,15 @@
 Rails.application.routes.draw do
   
-  devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }#, skip: [:sessions]
+  devise_for :users, controllers: { 
+    sessions: 'users/sessions',
+    omniauth_callbacks: 'users/omniauth_callbacks' 
+  }
   
   root "home#index"
   
   get "controllers" => "controllers#index"
   get "controllers/available" => "controllers#available", as: :available_controllers
-  get "controllers/:id" => "controllers#show", as: :controller
+  get "controllers/:id" => "controllers#show", as: :show_controller
   patch "controllers/:id/assign_to_user" => "controllers#assign_to_user", as: :assign_to_user_controller
   patch "controllers/:id/unlink_from_user" => "controllers#unlink_from_user", as: :unlink_from_user_controller
 

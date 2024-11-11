@@ -34,7 +34,11 @@ class Controller < ApplicationRecord
   def publish_lockers_passwords
     passwords = lockers.order(:id).pluck(:password)
     # se podria cambiar la estructura de passwords para incluir el id del locker y quizas los ids/nombres de los gestos
-    payload = { esp32_mac_address: esp32_mac_address, passwords: passwords }.to_json
+    payload = { 
+      esp32_mac_address: esp32_mac_address, 
+      passwords: passwords,
+      model_url: controller.user.model.model_url
+    }.to_json
 
     MQTT_CLIENT.publish(MQTT_TOPIC_PASSWORDS, payload)
   end

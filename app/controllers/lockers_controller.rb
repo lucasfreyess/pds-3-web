@@ -1,6 +1,7 @@
 class LockersController < ApplicationController
   
   before_action :authenticate_user!
+  before_action :authorize_user, only: [:edit]
 
   # GET /lockers/:id/edit
   def edit
@@ -25,7 +26,7 @@ class LockersController < ApplicationController
       owner_email: params[:locker][:owner_email],
       password: new_password
       )
-        redirect_to controller_path(@locker.controller), notice: 'Locker se actualizo!!'
+        redirect_to show_controller_path(@locker.controller), notice: 'Locker se actualizo!!'
     else
         render :edit
     end
@@ -35,6 +36,14 @@ class LockersController < ApplicationController
 
   def locker_params
     params.require(:locker).permit(:name, :owner_email)
+  end
+
+  def authorize_user
+    locker = Locker.find(params[:id])
+    controller = locker.controller
+    unless controller.user_id == current_user.id
+      redirect_to controllers_path, alert: "No tienes permisos para ver este casillero."
+    end
   end
   
 end

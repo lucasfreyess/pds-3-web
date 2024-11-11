@@ -50,7 +50,8 @@ class User < ApplicationRecord
   private
 
   def update_lockers_password_if_model_changed
-    if saved_change_to_model_id? #nose si esto es legal?!?!?
+    #nose si esto es legal?!?!? update: si funciona!!
+    if saved_change_to_model_id? 
       controllers.each(&:regenerate_lockers_passwords_if_model_changed)
     end
   end

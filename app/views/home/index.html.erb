@@ -2,32 +2,18 @@
 <div>
 
   <% if user_signed_in? %>
-    <h1>¡Hola, <%= current_user.email %>!</h1>
+    <h1>hola <%= current_user.email %>!</h1>
   <% else %>
-    <h1>¡Hola, desconocido!</h1>
+    <h1>logeate primero!!</h1>
   <% end %>
 
-  <h1>Home#index</h1>
-  <button class="btn btn-success"> Green Button </button> 
-  <p>Find me in app/views/home/index.html.erb</p>
   <%= link_to "Iniciar sesión con Google", user_google_oauth2_omniauth_authorize_path %>
 
-  <br>
+  <br />
   <p>
     Google Client ID: <%= ENV['GOOGLE_CLIENT_ID'] %>
     <br />
     Google Client Secret: <%= ENV['GOOGLE_CLIENT_SECRET']%>
   </p>
   
-  
-
-  <div class="card mx-auto" style="width: 18rem; ">
-    <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-      <a href="#" class="card-link">Card link</a>
-      <a href="#" class="card-link">Another link</a>
-    </div>
-  </div>
 </div>
