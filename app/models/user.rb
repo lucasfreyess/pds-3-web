@@ -11,7 +11,7 @@ class User < ApplicationRecord
 
   after_update :update_lockers_password_if_model_changed
 
-  validates :name, presence: {message: "of this user must be present"}
+  # validates :name, presence: {message: "of this user must be present"}
   validates :email, presence: {message: "of this user must be present"}, 
                     uniqueness: {message: "is already used. Aborting user creation."}
   validates :password, presence: {message: "of this user must be present"}, if: :password_required?
@@ -39,13 +39,19 @@ class User < ApplicationRecord
   end
   """
 
-  def self.from_omniauth(auth)
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
-      user.email = auth.info.email
-      user.password = Devise.friendly_token[0, 20]
-      user.name = auth.info.name   # O cualquier campo adicional
-    end
+  # def self.from_omniauth(auth)
+  #   where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+  #     user.email = auth.info.email
+  #     user.password = Devise.friendly_token[0, 20]
+  #     user.name = auth.info.name   # O cualquier campo adicional
+  #   end
+  # end
+
+  def self.from_google(u)
+    create_with(uid: u[:uid], provider: 'google',
+                password: Devise.friendly_token[0, 20]).find_or_create_by!(email: u[:email])
   end
+
   
   private
 

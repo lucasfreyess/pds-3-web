@@ -7,7 +7,7 @@
     <h1>logeate primero!!</h1>
   <% end %>
 
-  <%= link_to "Iniciar sesión con Google", user_google_oauth2_omniauth_authorize_path %>
+  <%= link_to "Iniciar sesión con Google", user_google_oauth2_omniauth_authorize_path , method: :post, :data => {turbo: "false"} %>
 
   <br />
   <p>
