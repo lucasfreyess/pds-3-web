@@ -41,5 +41,38 @@ class MqttService
     Rails.logger.info "Estado del controlador #{esp32_mac_address} actualizado exitosamente."
 
   end
+
+  # metodo para crear LockerOpenings desde mensajes de apertura
+  # de casilleros desde el topic de openings del broker MQTT!!
+  def self.process_locker_opening_message(payload)
+      
+    data = JSON.parse(payload)
+
+    esp32_mac_address = data['esp32_mac_address']
+    # probablemente deberia hacer que locker.name sea unico dentro de un controlador
+    locker_name = data['locker_name']
+    timestamp = Time.parse(data['timestamp'])
+
+    controller = Controller.find_by(esp32_mac_address: esp32_mac_address)
+    locker = Locker.find_by(controller: controller, password: locker_password)
+
+    unless controller
+      Rails.logger.error "Controller with MAC address #{esp32_mac_address} not found. Aborting locker_opening message processing."
+      return
+    end
+
+    unless locker
+      Rails.logger.error "Locker with password #{locker_password} not found. Aborting locker_opening message processing."
+      return
+    end
+
+    locker_opening = LockerOpening.create!(
+      locker: locker,
+      opened_at: timestamp
+    )
+
+    Rails.logger.info "Apertura de casillero #{locker_password} registrada exitosamente."
+
+  end
 end
 

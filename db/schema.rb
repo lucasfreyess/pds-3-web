@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_09_224046) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_12_171507) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -60,6 +60,14 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_09_224046) do
     t.datetime "updated_at", null: false
     t.bigint "model_id", null: false
     t.index ["model_id"], name: "index_gestures_on_model_id"
+  end
+
+  create_table "locker_openings", force: :cascade do |t|
+    t.bigint "locker_id", null: false
+    t.datetime "opened_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["locker_id"], name: "index_locker_openings_on_locker_id"
   end
 
   create_table "lockers", force: :cascade do |t|
@@ -114,6 +122,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_09_224046) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "controllers", "users"
   add_foreign_key "gestures", "models"
+  add_foreign_key "locker_openings", "lockers"
   add_foreign_key "lockers", "controllers"
   add_foreign_key "users", "models"
 end
