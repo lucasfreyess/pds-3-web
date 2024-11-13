@@ -99,4 +99,6 @@ Rails.application.configure do
     port: 3000 
   }
 
+  config.hosts << "pds3equipo5.duckdns.org"
+
 end

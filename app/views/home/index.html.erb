@@ -1,10 +1,5 @@
 <!-- app/views/home/index.html.erb -->
 <div>
-  <% if user_signed_in? %>
-    <h1>Hola <%= current_user.email %>!</h1>
-    <%= button_to "Publicar mensaje al broker MQTT", send_message_path, method: :post, remote: true, class: "btn btn-primary" %>
-  <% end %>
-
   <!-- Aperturas de casilleros!!!-->
   <div style="text-align: center;">
     <h2>Aperturas de Casilleros de los Últimos 7 Días</h2>
@@ -62,6 +57,8 @@
   
 
   <%= link_to "Iniciar sesión con Google", user_google_oauth2_omniauth_authorize_path , method: :post, :data => {turbo: "false"} %>
+
+  <%= button_to "Publicar mensaje al broker MQTT", send_message_path, method: :post, remote: true, class: "btn btn-primary" %>
 
   <br />
   <p>
