@@ -36,7 +36,6 @@ user_1 = User.create!(
 controller_1 = Controller.create!(
   name: 'Controller 1', 
   esp32_mac_address: '00:00:00:00:00:01',
-  user: user_1
 )
 
 # sin usuario para q salga en la vista de controladores disponibles!!
@@ -108,6 +107,12 @@ LockerOpening.create!(
   locker: Locker.first,
   opened_at: Time.now,
   was_succesful: true
+)
+
+LockerOpening.create!(
+  locker: Locker.first,
+  opened_at: Time.now,
+  was_succesful: false
 )
 
 puts 'Seed finished!!'
