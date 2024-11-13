@@ -1,11 +1,17 @@
 source "https://rubygems.org"
 
+#letter_opener para mails en desarrollo
+gem 'letter_opener'
+#mqtt!!
+gem 'mqtt'
 #bootstrap!!
 gem 'bootstrap', '~> 5.3.0'
 gem 'sassc-rails'
 # ermm
 gem 'omniauth'
 gem 'omniauth-google-oauth2'
+gem "omniauth-rails_csrf_protection"
+
 gem 'dotenv-rails', groups: [:development, :test]
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.2.2"

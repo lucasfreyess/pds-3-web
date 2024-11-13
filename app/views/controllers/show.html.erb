@@ -1,0 +1,78 @@
+<div>
+  <div style="text-align: center;">
+    <br />
+    <h1>
+      Verifica o desvincula tu controlador
+    </h1>
+  </div>
+
+  <br />
+
+  <div class="custom-card mx-auto">
+    <div class="card-body">
+      <h5 class="custom-card-title">
+        <%= @controller.name %>
+      </h5>
+
+      <h6 class="custom-card-subtitle">
+        <% if @controller.user.model.present? %>
+          usando <%= @controller.user.model.name %>
+        <% else %>
+          No hay modelo disponible
+        <% end %>
+      </h6>
+
+      <p class="custom-card-text">
+        <strong> Estado de conexión: </strong>
+        <% if @connected %>
+          <span class="text-success">Conectado</span>
+        <% else %>
+          <span class="text-danger">Desconectado</span>
+        <% end %>
+      </p>
+
+      <!-- Contenedor con display flex para los botones -->
+      <div class="d-flex justify-content-end mt-3">
+        <!-- Verificar estado de conexión -->
+        <%= link_to 'Verificar conexión', controller_path(@controller), method: :get, class: 'btn btn-info me-2' %>
+
+        <!-- Botón para redirigir a la lista de modelos -->
+        <%= link_to 'Modelos', models_path, class: 'btn btn-primary me-2' %>
+
+        <!-- Desvincular el controlador del usuario -->
+        <%= button_to 'Desvincular', unlink_from_user_controller_path(@controller), method: :patch, data: { confirm: '¿Estás seguro de que quieres desvincular este controlador?' }, class: 'btn btn-danger' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="custom-card mx-auto">
+    <div class="card-header">
+      <h5 class="custom-card-title">
+        Casilleros
+      </h5>
+    </div>
+
+    <ul class="list-group list-group-flush">
+      <% @controller.lockers.each do |locker| %>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <%= locker.name %> - <%= locker.owner_email.present? ? 
+            locker.owner_email 
+            : "Sin dueño" 
+          %>
+
+          <%= link_to 'Editar', edit_locker_path(locker), class: 'btn btn-primary btn-sm' %>
+        </li>
+      <% end %>
+    </ul>
+
+    <!-- Botón para enviar claves al MQTT -->
+    <div class="mt-4 text-center">
+      <%= button_to 'Enviar claves', send_keys_mqtt_path(@controller.id), method: :post, class: 'btn btn-success' %>
+    </div>
+  </div>
+
+  <div style="text-align: center;">
+    <%= link_to 'Volver', controllers_path, class: 'btn btn-info btn-lg'%>
+  </div>
+  <br />
+</div>

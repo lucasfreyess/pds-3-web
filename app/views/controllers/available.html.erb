@@ -1,0 +1,27 @@
+<div> 
+  <div style="text-align: center;">
+    <br />
+    <h1>Controladores disponibles!!</h1>
+
+    <%= link_to 'Crear nuevo controlador', new_controller_path, class: 'btn btn-success' %>
+  </div>
+
+  <br />
+
+  <% @controllers.each do |controller| %>
+    <div class="custom-card mx-auto">
+      <div class="card-body">
+        
+        <h5 class="custom-card-title">
+          <%= controller.name %>
+        </h5>
+        
+        <p class="custom-card-text">
+          con <%= controller.locker_count %> casilleros.
+        </p>
+        
+        <%= button_to 'Añadir', assign_to_user_controller_path(controller), method: :patch, class: 'btn btn-primary' %>
+      </div>
+    </div>
+  <% end %>
+</div>

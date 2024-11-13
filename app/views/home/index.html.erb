@@ -1,10 +1,19 @@
-<h1>Home#index</h1>
-<button class="btn btn-success"> Green Button </button> 
-<p>Find me in app/views/home/index.html.erb</p>
-<%= link_to "Iniciar sesión con Google", user_google_oauth2_omniauth_authorize_path %>
+<!-- app/views/home/index.html.erb -->
+<div>
+  <% if user_signed_in? %>
+    <h1>Hola <%= current_user.email %>!</h1>
+    <%= button_to "Publicar mensaje al broker MQTT", send_message_path, method: :post, remote: true, class: "btn btn-primary" %>
+  <% else %>
+    <h1>¡Inicia sesión primero!</h1>
+  <% end %>
 
-<br>
-<%= ENV['GOOGLE_CLIENT_ID'] %>
-<br>
-<%= ENV['GOOGLE_CLIENT_SECRET']%>
+  <%= link_to "Iniciar sesión con Google", user_google_oauth2_omniauth_authorize_path , method: :post, :data => {turbo: "false"} %>
 
+  <br />
+  <p>
+    Google Client ID: <%= ENV['GOOGLE_CLIENT_ID'] %>
+    <br />
+    Google Client Secret: <%= ENV['GOOGLE_CLIENT_SECRET'] %>
+  </p>
+  
+</div>
