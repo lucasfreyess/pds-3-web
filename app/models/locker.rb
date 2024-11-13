@@ -52,7 +52,7 @@ class Locker < ApplicationRecord
 
   def send_locker_update_email
     puts "ENVIANDO EMAIL!!......"
-    LockerMailer.locker_update_notification(self).deliver_now
+    LockerMailer.locker_update_notification(self).deliver_later
   end
 
   # Valida que si se modifica un gesto, se modifiquen los cuatro

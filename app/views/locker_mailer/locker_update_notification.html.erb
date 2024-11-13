@@ -1,11 +1,19 @@
 <p>Hola,</p>
 <p>Te notificamos que la información de tu casillero "<%= @locker.name %>" ha sido actualizada.</p>
-<p>Ahora el casillero está asignado a: <%= @owner %> (o sea, tu xd).</p>
+<p>Ahora el casillero está asignado a: <%= @owner %> (o sea, tú xd).</p>
 <p>La nueva contraseña de tu casillero es:</p>
 <ul>
-  <% @locker.password.each do |gesture| %>
-    <li><%= gesture %></li>
+  <% @gestures.each do |gesture_data| %>
+    <li>
+      <%= gesture_data[:gesture].name %>
+      <% if gesture_data[:image_cid] %>
+        <br>
+        <%= image_tag "cid:#{gesture_data[:image_cid]}", alt: gesture_data[:gesture].name, width: "100" %>
+      <% else %>
+        <p>Sin imagen asociada</p>
+      <% end %>
+    </li>
   <% end %>
 </ul>
 
-<p>Saludos,<br>quipo 5</p>
+<p>Saludos,<br>equipo 5</p>

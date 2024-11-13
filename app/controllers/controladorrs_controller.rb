@@ -22,7 +22,7 @@ class ControladorrsController < ApplicationController
   # POST /controladorrs or /controladorrs.json
   def create
     Rails.logger.debug "Received parameters: #{params.inspect}"
-    @controller = Controller.new(controller_params)
+    @controller = Controllador.new(controller_params)
   
     # Crear lockers asociados con claves inicializadas a "0000"
     if @controller.save

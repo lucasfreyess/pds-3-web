@@ -1,35 +1,33 @@
-<%= form_with(model: @locker, url: locker_path(@locker), local: true) do |form| %>
-  <div class="mb-3">
-    <%= form.label :name, "Nombre del Casillero" %>
-    <%= form.text_field :name, class: "form-control" %>
-  </div>
+<div class="container">
+  <%= form_with(model: @locker, url: locker_path(@locker), local: true) do |form| %>
+    <div class="mb-3">
+      <%= form.label :name, "Nombre del Casillero", class: "form-label" %>
+      <%= form.text_field :name, class: "form-control" %>
+    </div>
 
-  <div class="mb-3">
-    <%= form.label :owner_email, "Email del Dueño" %>
-    <%= form.email_field :owner_email, class: "form-control" %>
-  </div>
+    <div class="mb-3">
+      <%= form.label :owner_email, "Email del Dueño", class: "form-label" %>
+      <%= form.email_field :owner_email, class: "form-control" %>
+    </div>
 
-  <%# Para cada dígito del password, muestra un campo numérico con un valor por defecto (si lo hay) %>
-  <h5>Configura la clave de 4 dígitos (números del 0 al 6)</h5>
-  
-  <div class="mb-3 d-flex justify-content-between">
-    <% (0..3).each do |index| %>
-      <div class="d-flex flex-column align-items-center">
-        <%= form.label "password_#{index}", "#{index + 1}", class: "form-label" %>
-        <%= form.number_field "password_#{index}", 
-                              value: @locker.password[index] || 0, 
-                              class: "form-control w-auto", 
-                              min: 0, 
-                              max: 6, 
-                              step: 1, 
-                              required: true, 
-                              placeholder: "#{index + 1}" %>
+    <%# Opciones de gestos disponibles del modelo del usuario actual %>
+    <% if current_user.model.present? && current_user.model.gestures.any? %>
+      <% gesture_options = current_user.model.gestures.pluck(:name) %>
+    <% else %>
+      <% gesture_options = [] %>
+    <% end %>
+
+    <%# Para cada índice de la lista, muestra un campo de selección con Bootstrap %>
+    <% @locker.password.each_with_index do |gesture, index| %>
+      <div class="mb-3">
+        <%= form.label "gesture_#{index + 1}", "Gesto #{index + 1} de la Clave", class: "form-label" %>
+        <%= form.select "password_#{index}", options_for_select(gesture_options, gesture), { include_blank: "Selecciona un gesto" }, class: "form-select" %>
       </div>
     <% end %>
-  </div>
 
-  <div class="mt-3">
-    <%= form.submit "Guardar cambios", class: "btn btn-success" %>
-    <%= link_to "Cancelar", controller_path(@locker.controller), class: "btn btn-secondary" %>
-  </div>
-<% end %>
+    <div class="mt-3">
+      <%= form.submit "Guardar cambios", class: "btn btn-success" %>
+      <%= link_to "Cancelar", controller_path(@locker.controller), class: "btn btn-secondary" %>
+    </div>
+  <% end %>
+<div>
