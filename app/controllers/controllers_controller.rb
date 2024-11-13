@@ -16,6 +16,7 @@ class ControllersController < ApplicationController
   # GET /controllers/:id
   def show
     @controller = Controller.find(params[:id])
+    @model = @controller.user.model
     @lockers = @controller.lockers
     @connected = @controller.last_seen_at && (Time.current - @controller.last_seen_at) <= 10.minutes
   end

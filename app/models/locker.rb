@@ -4,6 +4,7 @@ class Locker < ApplicationRecord
   has_many :locker_openings, class_name: "LockerOpening", dependent: :destroy
   
   before_create :check_locker_limit, :increment_locker_count
+  after_update :send_locker_update_email, if: :owner_or_password_changed?
   
   # el locker viene asociado a un controlador por defecto, por lo que
   # una contraseña deberia ser creada cuando se asocia un usuario al
@@ -42,6 +43,16 @@ class Locker < ApplicationRecord
       errors.add(:password, "La contraseña debe tener 4 caracteres.")
       throw(:abort)
     end
+  end
+
+  def owner_or_password_changed?
+    puts "CHECKEANDO SI CAMBIO EL OWNER O LA CONTRASEÑA..."
+    saved_change_to_owner_email? || saved_change_to_password?
+  end
+
+  def send_locker_update_email
+    puts "ENVIANDO EMAIL!!......"
+    LockerMailer.locker_update_notification(self).deliver_now
   end
 
   # Valida que si se modifica un gesto, se modifiquen los cuatro

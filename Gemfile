@@ -1,5 +1,7 @@
 source "https://rubygems.org"
 
+#letter_opener para mails en desarrollo
+gem 'letter_opener'
 #mqtt!!
 gem 'mqtt'
 #bootstrap!!
