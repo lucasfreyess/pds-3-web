@@ -57,7 +57,7 @@ class MqttController < ApplicationController
       end
     
       # Dirección IP del broker remoto o dominio
-      broker_ip = "localhost"
+      broker_ip = "test.mosquitto.org"
     
       # Recuperar las claves de los lockers asociados al controlador
       claves = @controller.lockers.map(&:password)  # Suponemos que cada locker tiene una propiedad `password`
@@ -85,7 +85,7 @@ class MqttController < ApplicationController
       client.connect
     
       # Log para verificar el tópico y el mensaje a publicar
-      topic = params[:topic] || "controlador/#{@controller.id}"  # Usar el ID del controlador en el topic si no se pasa uno
+      topic = params[:topic] || "controlador/#{@controller.esp32_mac_address}"  # Usar el ID del en el topic si no se pasa uno
       Rails.logger.info("Publicando mensaje en el tópico: #{topic} con mensaje: #{message}")
     
       # Publica el mensaje en un tópico específico

@@ -88,7 +88,7 @@ class ControllersController < ApplicationController
 
     # Publicación de las claves iniciales para cada locker
     @controller.lockers.each_with_index do |locker, index|
-      password_topic = "controladores/#{controller_id}/locker_#{locker.id}/clave"
+      password_topic = "controladores/#{controller_id}"
       MQTT_CLIENT.publish(password_topic, locker.password)
     end
 
