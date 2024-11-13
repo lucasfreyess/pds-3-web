@@ -10,7 +10,6 @@
 
   <div class="custom-card mx-auto">
     <div class="card-body">
-      
       <h5 class="custom-card-title">
         <%= @controller.name %>
       </h5>
@@ -23,7 +22,6 @@
         <% end %>
       </h6>
 
-
       <p class="custom-card-text">
         <strong> Estado de conexión: </strong>
         <% if @connected %>
@@ -33,16 +31,21 @@
         <% end %>
       </p>
 
-      <!-- verificar estado de conexión -->
-      <%= link_to 'Verificar conexión', controller_path(@controller), method: :get, class: 'btn btn-info' %>
+      <!-- Contenedor con display flex para los botones -->
+      <div class="d-flex justify-content-end mt-3">
+        <!-- Verificar estado de conexión -->
+        <%= link_to 'Verificar conexión', controller_path(@controller), method: :get, class: 'btn btn-info me-2' %>
 
-      <!-- desvincular el controlador del usuario -->
-      <%= button_to 'Desvincular', unlink_from_user_controller_path(@controller), method: :patch, data: { confirm: '¿Estás seguro de que quieres desvincular este controlador?' }, class: 'btn btn-danger' %>
+        <!-- Botón para redirigir a la lista de modelos -->
+        <%= link_to 'Modelos', models_path, class: 'btn btn-primary me-2' %>
+
+        <!-- Desvincular el controlador del usuario -->
+        <%= button_to 'Desvincular', unlink_from_user_controller_path(@controller), method: :patch, data: { confirm: '¿Estás seguro de que quieres desvincular este controlador?' }, class: 'btn btn-danger' %>
+      </div>
     </div>
   </div>
 
   <div class="custom-card mx-auto">
-
     <div class="card-header">
       <h5 class="custom-card-title">
         Casilleros
@@ -61,6 +64,11 @@
         </li>
       <% end %>
     </ul>
+
+    <!-- Botón para enviar claves al MQTT -->
+    <div class="mt-4 text-center">
+      <%= button_to 'Enviar claves', send_keys_mqtt_path(@controller.id), method: :post, class: 'btn btn-success' %>
+    </div>
   </div>
 
   <div style="text-align: center;">

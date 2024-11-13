@@ -19,6 +19,11 @@ class ControllersController < ApplicationController
     @model = @controller.user.model
     @lockers = @controller.lockers
     @connected = @controller.last_seen_at && (Time.current - @controller.last_seen_at) <= 10.minutes
+    if @connected
+      flash[:notice] = "¡Conexión exitosa!"
+    else
+      flash[:alert] = "No se pudo conectar al controlador."
+    end
   end
 
   # PATCH /controllers/:id/assign_to_user
@@ -78,5 +83,26 @@ class ControllersController < ApplicationController
     end
   end
 
+  def configure_mqtt_topics
+    controller_id = @controller.id
+
+    # Publicación de las claves iniciales para cada locker
+    @controller.lockers.each_with_index do |locker, index|
+      password_topic = "controladores/#{controller_id}/locker_#{locker.id}/clave"
+      MQTT_CLIENT.publish(password_topic, locker.password)
+    end
+
+    # Publicación del enlace del modelo actualizado
+    model_url_topic = "controladores/#{controller_id}/model_url"
+    model_url = @controller.model_url # Suponiendo que `model_url` está definido en el modelo Controller
+    MQTT_CLIENT.publish(model_url_topic, model_url) if model_url.present?
+
+
+    # Suscripción a los topics de estado para cada locker
+    @controller.lockers.each do |locker|
+      status_topic = "controladores/#{controller_id}/locker_#{locker.id}/status"
+      MQTT_CLIENT.subscribe(status_topic)
+    end
+  end
 end
 
