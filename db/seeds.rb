@@ -107,6 +107,7 @@ end
 LockerOpening.create!(
   locker: Locker.first,
   opened_at: Time.now,
+  was_succesful: true
 )
 
 puts 'Seed finished!!'

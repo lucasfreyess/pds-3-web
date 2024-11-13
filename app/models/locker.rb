@@ -47,6 +47,7 @@ class Locker < ApplicationRecord
 
   def owner_or_password_changed?
     puts "CHECKEANDO SI CAMBIO EL OWNER O LA CONTRASEÑA..."
+    return false if self.controller.user_id.nil?
     saved_change_to_owner_email? || saved_change_to_password?
   end
 

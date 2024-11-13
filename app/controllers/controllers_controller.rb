@@ -47,6 +47,10 @@ class ControllersController < ApplicationController
     @controller = Controller.find(params[:id])
 
     if @controller.update!(user_id: nil)
+
+      # Actualiza los correos de los lockers a vacío
+      @controller.lockers.update_all(owner_email: "")
+
       redirect_to controllers_path, notice: "Controlador desasignado correctamente."
     else
       redirect_to controller_path(@controller), alert: "Hubo un error al desasignar el controlador."
