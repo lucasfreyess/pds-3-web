@@ -1,7 +1,7 @@
 <p>Hola,</p>
 <p>Te notificamos que la información de tu casillero "<%= @locker.name %>" ha sido actualizada.</p>
-<p>Ahora el casillero está asignado a: <%= @owner %> (o sea, tú xd).</p>
-<p>La nueva contraseña de tu casillero es:</p>
+<p>Ahora el casillero está asignado a: <%= @owner %> </p>
+<p>La contraseña de tu casillero es:</p>
 <ul>
   <% @gestures.each do |gesture_data| %>
     <li>
@@ -16,4 +16,30 @@
   <% end %>
 </ul>
 
-<p>Saludos,<br>equipo 5</p>
+<p> En orden de abrir el casillero, debes seguir los siguientes pasos:</p>
+<ul>
+  <li> 
+    Aproximate al controlador de casillero. Este se encuentra ubicado a un lado de los casilleros, cubierto de una caja de cartón, con botones visibles y una tirita de luces LED. 
+  </li>
+  <li> 
+    Para encontrar tu casillero, simplemente debes apretar el botón ubicado los más cercano a la izquierda de la tirita LED, hasta que la posición de la luz coincida con el número de tu casillero.
+  </li>
+  <li> 
+    Una vez que el número de tu casillero es seleccionado, debes apretar el otro botón de la tirita LED, para confirmar tu selección.
+  </li>
+  <li> 
+    Luego, se prenderán cuatro luces LED azules en sucesión. Durante este tiempo, debes preparar tu mano 30 centimetros por debajo de la caja de cartón, para que el sensor de video pueda detectarla.
+  </li>
+  <li> 
+    Una vez que las cuatro luces azules aparecen, el gesto que muestres será capturado por el sensor de video. Una vez que el gesto es procesado, se seguirá con el siguiente digito de la contraseña.
+  </li>
+  <li> 
+    Cuando los cuatro gestos son procesados, el controlador avisara si la contraseña es correcta o no. Si la contraseña es correcta, el casillero se abrirá. En caso contrario, las luces del LED parpadearán en rojo.
+    <br /> <strong> No sabrás si tu contraseña es incorrecta hasta el final, por lo que asegurate de mostrar bien tu mano.</strong>
+  </li>
+  <li>
+    Finalmente, para cerrar el casillero, debes alinear la boquilla del casillero con la cerradura, empujar la puerta hasta que se cierre y apretar el mismo botón que usaste para confirmar la selección del casillero. Esto asegurará que el casillero se cierre correctamente.
+  </li>
+</ul>
+
+<p>Saludos,<br>Equipo 5</p>
