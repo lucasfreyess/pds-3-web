@@ -1,0 +1,11 @@
+<p>Hola,</p>
+<p>Te notificamos que la información de tu casillero "<%= @locker.name %>" ha sido actualizada.</p>
+<p>Ahora el casillero está asignado a: <%= @owner %> (o sea, tu xd).</p>
+<p>La nueva contraseña de tu casillero es:</p>
+<ul>
+  <% @locker.password.each do |gesture| %>
+    <li><%= gesture %></li>
+  <% end %>
+</ul>
+
+<p>Saludos,<br>quipo 5</p>
