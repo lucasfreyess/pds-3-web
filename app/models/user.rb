@@ -23,36 +23,41 @@ class User < ApplicationRecord
     puts errors.full_messages
   end
 
-  """
-  def self.from_omniauth(access_token)
-    data = access_token.info
-    user = User.where(email: data['email']).first
-
-    # Uncomment the section below if you want users to be created if they don't exist
-    unless user
-      user = User.create(
-        email: data['email'],
-        password: Devise.friendly_token[0,20]
-      )
-    end
-    user
-  end
-  """
-
-  # def self.from_omniauth(auth)
-  #   where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
-  #     user.email = auth.info.email
-  #     user.password = Devise.friendly_token[0, 20]
-  #     user.name = auth.info.name   # O cualquier campo adicional
-  #   end
-  # end
-
   def self.from_google(u)
     create_with(uid: u[:uid], provider: 'google',
                 password: Devise.friendly_token[0, 20]).find_or_create_by!(email: u[:email])
   end
 
-  
+  def locker_openings_last_7_days
+
+    openings = LockerOpening.joins(locker: { controller: :user })
+    .where(controllers: { user_id: id })
+    .where("locker_openings.opened_at >= ?", 7.days.ago.beginning_of_day)
+
+    successful_openings = openings.where(was_succesful: true)
+      .group("DATE(locker_openings.opened_at)")
+      .order("DATE(locker_openings.opened_at) DESC")
+      .count
+
+    failed_openings = openings.where(was_succesful: false)
+      .group("DATE(locker_openings.opened_at)")
+      .order("DATE(locker_openings.opened_at) DESC")
+      .count
+
+    { successful: successful_openings, failed: failed_openings }
+  end
+
+  # para saber el casillero que mas veces se ha intentado abrir, en los ultimos siete dias
+  def most_opened_locker_last_7_days
+    Locker.joins(controller: :user)
+    .where(controllers: { user_id: id })
+    .joins(:locker_openings)
+    .where("locker_openings.opened_at >= ?", 7.days.ago.beginning_of_day)
+    .group(:id)
+    .order("COUNT(locker_openings.id) DESC")
+    .first
+  end
+
   private
 
   def update_lockers_password_if_model_changed
@@ -65,4 +70,6 @@ class User < ApplicationRecord
   def password_required?
     new_record? || password.present?
   end
+
+  
 end
