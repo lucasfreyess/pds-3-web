@@ -2,6 +2,7 @@ class LockerOpening < ApplicationRecord
 
   belongs_to :locker, class_name: "Locker"
 
+  before_create :increment_locker_open_count
   after_create :send_locker_opening_email
   
   validates :locker_id, presence: { message: "of locker opening must be present" }
@@ -17,6 +18,10 @@ class LockerOpening < ApplicationRecord
   def send_locker_opening_email
     puts "ENVIANDO EMAIL DE APERTURA DE CASILLERO..."
     LockerMailer.locker_opening_notification(self.locker).deliver_later
+  end
+
+  def increment_locker_open_count
+    locker.increment!(:open_count)
   end
 
 end

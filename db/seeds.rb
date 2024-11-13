@@ -58,8 +58,8 @@ end
 3.times do |i|
   
   Locker.create!(
-    name: "Locker #{i+5}",
-    description: "Locker #{i+5} description",
+    name: "Locker #{i+1}",
+    description: "Locker #{i+1} description",
     controller: controller_2
   )
 
@@ -78,14 +78,6 @@ end
 
 end
 
-seven = Gesture.create!(
-  name: "Gesture 7",
-  description: "En Controlador fisico es: 7",
-  model: modelo_1
-)
-
-seven.image.attach(io: File.open(Rails.root.join('app/assets/images/7.png')), filename: "7.png", content_type: 'image/png')
-
 blank = Gesture.create!(
   name: "Blank",
   description: "En Controlador fisico es: 6",
@@ -93,6 +85,14 @@ blank = Gesture.create!(
 )
 
 blank.image.attach(io: File.open(Rails.root.join('app/assets/images/blank.png')), filename: "blank.png", content_type: 'image/png')
+
+seven = Gesture.create!(
+  name: "Gesture 7",
+  description: "En Controlador fisico es: 7",
+  model: modelo_1
+)
+
+seven.image.attach(io: File.open(Rails.root.join('app/assets/images/7.png')), filename: "7.png", content_type: 'image/png')
 
 8.times do |i|
 
