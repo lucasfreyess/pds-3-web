@@ -16,7 +16,7 @@ MQTT_TOPIC_STATUS = 'controllers/status' # lo mismo que arriba
 #end
 
 # ejemplo de conexion con ssl
-client = MQTT::Client.connect(
-:host => 'localhost',
-:port => 1883,
-)
+#client = MQTT::Client.connect(
+#:host => 'localhost',
+#:port => 1883,
+#)

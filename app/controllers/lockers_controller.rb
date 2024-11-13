@@ -22,14 +22,14 @@ class LockersController < ApplicationController
     # aqui hay que mandar el nuevo password al mqtt!!
     
     topic_base = "controladores/#{@locker.controller.id}/locker_#{@locker.id}/clave"
-    MQTT_CLIENT.publish(topic_base, new_password)
+    #MQTT_CLIENT.publish(topic_base, new_password)
 
     if @locker.update!(
       name: params[:locker][:name],
       owner_email: params[:locker][:owner_email],
       password: new_password
       )
-        redirect_to show_controller_path(@locker.controller), notice: 'Locker se actualizo!!'
+        redirect_to controller_path(@locker.controller), notice: 'Locker se actualizo!!'
     else
         render :edit
     end
