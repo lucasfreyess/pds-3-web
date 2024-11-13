@@ -47,6 +47,11 @@ class ControllersController < ApplicationController
     @model = @controller.user.model
     @lockers = @controller.lockers
     @connected = @controller.last_seen_at && (Time.current - @controller.last_seen_at) <= 10.minutes
+    if @connected
+      flash[:notice] = "¡Conexión exitosa!"
+    else
+      flash[:alert] = "No se pudo conectar al controlador."
+    end
   end
 
   # PATCH /controllers/:id/assign_to_user
@@ -136,8 +141,6 @@ class ControllersController < ApplicationController
       status_topic = "controladores/#{controller_id}/locker_#{locker.id}/status"
       MQTT_CLIENT.subscribe(status_topic)
     end
-
   end
-
 end
 
