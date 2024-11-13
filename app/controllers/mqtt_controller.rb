@@ -2,11 +2,15 @@
 class MqttController < ApplicationController
     def send_message
       # Dirección IP del broker remoto o dominio
-      broker_ip = ""
+      broker_ip = "localhost"
   
       # Conexión al broker
-      client = MQTT::Client.new("mqtt://#{broker_ip}")
-  
+      # client = MQTT::Client.new(:host => "mqtt://#{broker_ip}", :port => 1883)
+      client = MQTT::Client.new
+      client.host = broker_ip  # Dirección IP del broker
+      client.port = 1883
+      # client.ssl = true
+
       # Conéctate al broker
       client.connect
   
@@ -21,7 +25,7 @@ class MqttController < ApplicationController
   
     def subscribe_to_topic
       # Dirección IP del broker remoto o dominio
-      broker_ip = "" 
+      broker_ip = "172.28.143.35" 
   
       # Conéctate al broker
       client = MQTT::Client.new("mqtt://#{broker_ip}")
