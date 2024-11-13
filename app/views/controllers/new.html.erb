@@ -1,36 +1,36 @@
-<h1>Nuevo Controlador</h1>
-
-<%= form_with(model: @controller, local: true) do |form| %>
-  <% if @controller.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@controller.errors.count, "error") %> impidió que se guardara el controlador:</h2>
-
-      <ul>
-        <% @controller.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
+<h1 class= "ms-5 mt-3">Crear Controlador<h1>
+<div class="container">
+    <div class="">
+        <%= form_with(model: @controller, local: true) do |form| %>
+        <% if @controller.errors.any? %>
+            <div id="error_explanation" class="alert alert-danger">
+            <h2><%= pluralize(@controller.errors.count, "error") %> impidió que se guardara el controlador:</h2>
+            <ul>
+                <% @controller.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+                <% end %>
+            </ul>
+            </div>
         <% end %>
-      </ul>
-    </div>
-  <% end %>
 
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
-  </div>
+        <div class="form-group my-3">
+            <%= form.label :name, class: 'form-label fs-5' %>
+            <%= form.text_field :name, class: 'form-control', placeholder: 'Ingresa el nombre del controlador' %>
+        </div>
 
-  <div class="field">
-    <%= form.label :esp32_mac_address %>
-    <%= form.text_field :esp32_mac_address %>
-  </div>
+        <div class="form-group my-3">
+            <%= form.label :esp32_mac_address, class: 'fs-5 form-label' %>
+            <%= form.text_field :esp32_mac_address, class: 'form-control', placeholder: 'Ingresa la dirección MAC del ESP32' %>
+        </div>
 
-  <div class="field">
-    <%= form.label :locker_count %>
-    <%= form.number_field :locker_count %>
-  </div>
+        <div class="form-group my-3">
+            <%= form.label :locker_count, class: 'fs-5 form-label' %>
+            <%= form.number_field :locker_count, class: 'form-control', placeholder: 'Ingresa el número de casilleros' %>
+        </div>
 
-  <div class="actions">
-    <%= form.submit %>
-  </div>
-<% end %>
-
-<%= link_to 'Back', controllers_path %>
+        <div class="form-group mt-3">
+            <%= form.submit 'Crear Controlador', class: 'btn btn-primary' %>
+        </div>
+        <% end %>
+    <div>
+<div>

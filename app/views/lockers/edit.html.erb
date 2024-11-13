@@ -10,7 +10,12 @@
   </div>
 
   <%# Opciones de gestos disponibles del modelo del usuario actual %>
-  <% gesture_options = current_user.model.gestures.pluck(:name) %>
+  <% if current_user.model.present? && current_user.model.gestures.any? %>
+    <% gesture_options = current_user.model.gestures.pluck(:name) %>
+  <% else %>
+    <% gesture_options = [] %>
+  <% end %>
+
 
   <%# Para cada índice de la lista, muestra un campo de selección %>
   <% @locker.password.each_with_index do |gesture, index| %>
@@ -22,6 +27,6 @@
 
   <div class="mt-3">
     <%= form.submit "Guardar cambios", class: "btn btn-success" %>
-    <%= link_to "Cancelar", show_controller_path(@locker.controller), class: "btn btn-secondary" %>
+    <%= link_to "Cancelar", controller_path(@locker.controller), class: "btn btn-secondary" %>
   </div>
 <% end %>
