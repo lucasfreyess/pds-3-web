@@ -16,8 +16,13 @@
       </h5>
 
       <h6 class="custom-card-subtitle">
-        usando <%= @controller.user.model.name %>
+        <% if @controller.user.model.present? %>
+          usando <%= @controller.user.model.name %>
+        <% else %>
+          No hay modelo disponible
+        <% end %>
       </h6>
+
 
       <p class="custom-card-text">
         <strong> Estado de conexión: </strong>
@@ -29,7 +34,7 @@
       </p>
 
       <!-- verificar estado de conexión -->
-      <%= link_to 'Verificar conexión', show_controller_path(@controller), method: :get, class: 'btn btn-info' %>
+      <%= link_to 'Verificar conexión', controller_path(@controller), method: :get, class: 'btn btn-info' %>
 
       <!-- desvincular el controlador del usuario -->
       <%= button_to 'Desvincular', unlink_from_user_controller_path(@controller), method: :patch, data: { confirm: '¿Estás seguro de que quieres desvincular este controlador?' }, class: 'btn btn-danger' %>

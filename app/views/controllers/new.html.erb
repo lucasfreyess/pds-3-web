@@ -1,0 +1,36 @@
+<h1>Nuevo Controlador</h1>
+
+<%= form_with(model: @controller, local: true) do |form| %>
+  <% if @controller.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@controller.errors.count, "error") %> impidió que se guardara el controlador:</h2>
+
+      <ul>
+        <% @controller.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :esp32_mac_address %>
+    <%= form.text_field :esp32_mac_address %>
+  </div>
+
+  <div class="field">
+    <%= form.label :locker_count %>
+    <%= form.number_field :locker_count %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
+
+<%= link_to 'Back', controllers_path %>

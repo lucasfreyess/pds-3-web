@@ -1,4 +1,4 @@
-<%= form_with(model: @locker, url: update_locker_path(@locker), local: true) do |form| %>
+<%= form_with(model: @locker, url: locker_path(@locker), local: true) do |form| %>
   <div class="mb-3">
     <%= form.label :name, "Nombre del Casillero" %>
     <%= form.text_field :name, class: "form-control" %>
