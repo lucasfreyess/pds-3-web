@@ -58,6 +58,16 @@ class User < ApplicationRecord
     .first
   end
 
+  # numero de dueños unicos que han abierto sus casilleros en los ultimos 7 dias
+  def unique_owners_opened_last_7_days
+    Locker.joins(controller: :user)
+    .where(controllers: { user_id: id })
+    .joins(:locker_openings)
+    .where("locker_openings.opened_at >= ?", 7.days.ago.beginning_of_day)
+    .distinct(:owner_email) 
+    .count
+  end
+
   private
 
   def update_lockers_password_if_model_changed

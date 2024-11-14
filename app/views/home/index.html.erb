@@ -1,83 +1,112 @@
-<!-- app/views/home/index.html.erb -->
-<div>
-  <!-- Aperturas de casilleros!!!-->
+<% if current_user.controllers.empty? || current_user.model.nil? %>
   <div style="text-align: center;">
-    <h2>Aperturas de Casilleros de los Últimos 7 Días</h2>
+    <h2>Debes asignar un controlador y un modelo para ver tus métricas.</h2>
   </div>
+<% else %>
+  <div>
+    <br />
+    <!-- Aperturas de casilleros!!!-->
+    <div style="text-align: center;">
+      <h2>Aperturas de Casilleros de los Últimos 7 Días</h2>
+    </div>
 
-  <% @locker_openings_by_day[:successful].each do |date, success_count| %>
-    <% failed_count = @locker_openings_by_day[:failed][date] || 0 %>
-    
+    <br />
+
+    <% @locker_openings_by_day[:successful].each do |date, success_count| %>
+      <% failed_count = @locker_openings_by_day[:failed][date] || 0 %>
+      
+      <div class="custom-card mx-auto">
+        <div class="card-body">
+          <div style="text-align: center;">
+            <h5 class="custom-card-title">
+              <%= date.strftime("%A, %d %B %Y") %>
+            </h5>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <p class="text-success mb-1"><strong>Aperturas Exitosas:</strong> <%= success_count %></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <p class="text-danger mb-1"><strong>Aperturas Fallidas:</strong> <%= failed_count %></p>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <hr />
+
+    <!-- el casillero mas abierto de los ultimos siete dias!!-->
     <div class="custom-card mx-auto">
       <div class="card-body">
         <div style="text-align: center;">
           <h5 class="custom-card-title">
-            <%= date.strftime("%A, %d %B %Y") %>
+            Casillero más abierto de los últimos 7 días
           </h5>
         </div>
         
         <div class="row">
           <div class="col-md-6">
-            <p class="text-success mb-1"><strong>Aperturas Exitosas:</strong> <%= success_count %></p>
+            <% if @most_opened_locker %>
+              <p class="mb-1">
+                <strong>
+                  Nombre:
+                </strong> 
+                <%= @most_opened_locker.name %>
+              </p>
+            <% end %>
           </div>
         </div>
         <div class="row">
           <div class="col-md-6">
-            <p class="text-danger mb-1"><strong>Aperturas Fallidas:</strong> <%= failed_count %></p>
+            <% if @most_opened_locker %>
+              <p class="mb-1">
+                <strong>
+                  Aperturas:
+                </strong> 
+                <%= @most_opened_locker.open_count %></p>
+            <% end %>
           </div>
         </div>
-        </div>
       </div>
     </div>
-  <% end %>
 
-  <hr />
+    <hr />
 
-  <!-- el casillero mas abierto de los ultimos siete dias!!-->
-  <div class="custom-card mx-auto">
-    <div class="card-body">
-      <div style="text-align: center;">
-        <h5 class="custom-card-title">
-          Casillero más abierto de los últimos 7 días
-        </h5>
-      </div>
-      
-      <div class="row">
-        <div class="col-md-6">
-          <% if @most_opened_locker %>
+    <!-- numero de dueños unicos que han abierto sus casilleros en los ultimos siete dias-->
+    <div class="custom-card mx-auto">
+      <div class="card-body">
+        <div style="text-align: center;">
+          <h5 class="custom-card-title">
+            Número de Dueños Únicos que han Abierto sus Casilleros en los Últimos 7 Días
+          </h5>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6">
             <p class="mb-1">
               <strong>
-                Nombre:
+                Dueños Únicos:
               </strong> 
-              <%= @most_opened_locker.name %>
+              <%= @unique_owners_opened %>
             </p>
-          <% end %>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6">
-          <% if @most_opened_locker %>
-            <p class="mb-1">
-              <strong>
-                Aperturas:
-              </strong> 
-              <%= @most_opened_locker.open_count %></p>
-          <% end %>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  
+    
+    <%= button_to "Publicar mensaje al broker MQTT", send_message_path, method: :post, remote: true, class: "btn btn-primary" %>
 
-  <%= link_to "Iniciar sesión con Google", user_google_oauth2_omniauth_authorize_path , method: :post, :data => {turbo: "false"} %>
-
-  <%= button_to "Publicar mensaje al broker MQTT", send_message_path, method: :post, remote: true, class: "btn btn-primary" %>
-
-  <br />
-  <p>
-    Google Client ID: <%= ENV['GOOGLE_CLIENT_ID'] %>
     <br />
-    Google Client Secret: <%= ENV['GOOGLE_CLIENT_SECRET'] %>
-  </p>
-  
-</div>
+    <p>
+      Google Client ID: <%= ENV['GOOGLE_CLIENT_ID'] %>
+      <br />
+      Google Client Secret: <%= ENV['GOOGLE_CLIENT_SECRET'] %>
+    </p>
+    
+  </div>
+<% end %>
