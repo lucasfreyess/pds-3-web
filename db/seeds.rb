@@ -121,7 +121,7 @@ seven.image.attach(io: File.open(Rails.root.join('app/assets/images/7.png')), fi
 
 end
 
-7.times do |i|
+5.times do |i|
 
   Gesture.create!(
     name: "#{i}",
@@ -129,7 +129,26 @@ end
     model: modelo_3
   )
 
+  gesture.image.attach(io: File.open(Rails.root.join("app/assets/images/#{i + 1}.png")), filename: "#{i + 1}.png", content_type: 'image/png')
+
 end
+
+blank = Gesture.create!(
+  name: "6",
+  description: "En Controlador fisico es: 6",
+  model: modelo_3
+)
+
+blank.image.attach(io: File.open(Rails.root.join('app/assets/images/blank.png')), filename: "blank.png", content_type: 'image/png')
+
+seven = Gesture.create!(
+  name: "7",
+  description: "En Controlador fisico es: 7",
+  model: modelo_3
+)
+
+seven.image.attach(io: File.open(Rails.root.join('app/assets/images/7.png')), filename: "7.png", content_type: 'image/png')
+
 
 LockerOpening.create!(
   locker: Locker.first,
