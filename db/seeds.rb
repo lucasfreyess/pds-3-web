@@ -76,6 +76,7 @@ end
   
   Locker.create!(
     name: "#{i+1}",
+    owner_email: "lucas.reyes.salazar@gmail.com",
     description: "Locker #{i+1} description",
     controller: controller_3
   )
