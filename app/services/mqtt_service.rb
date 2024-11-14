@@ -62,14 +62,14 @@ class MqttService
       next unless locker  # Si no se encuentra el casillero, omite
 
       # Actualiza el estado del casillero en la base de datos
-      locker.update!(is_locked: statuses[index] == 1)
+      locker.update!(is_locked: statuses[index] == 0)
 
       # Llama a `process_locker_opening_message` para registrar la apertura
       process_locker_opening_message({
         'esp32_mac_address' => esp32_mac_address,
         'locker_id' => locker.name,
         'time' => timestamp.iso8601,
-        'status' => statuses[index] == 1 ? 'cerrado' : 'abierto'
+        'status' => statuses[index] == 0 ? 'cerrado' : 'abierto'
       })
     end
 
