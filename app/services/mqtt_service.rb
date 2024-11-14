@@ -6,7 +6,7 @@ class MqttService
       loop do
         begin
           MQTT::Client.connect(host: BROKER_URL, port: 1883, keep_alive: 60) do |client|
-            topic = "controladores/+/locker_+/status"
+            topic = "controladores/locker/status"
             client.subscribe(topic)
 
             puts "Suscrito al topic #{topic}"
@@ -35,14 +35,12 @@ class MqttService
   # desde el topic de status del broker MQTT!!
   def self.process_status_message(payload)
 
-    data = JSON.parse(payload)
+    data = payload.is_a?(String) ? JSON.parse(payload) : payload
 
-    esp32_mac_address = data['esp32_mac_address']
-    # lockers_passwords = data['lockers_passwords']
-    # lockers_status = data['lockers_status']
-    timestamp = Time.parse(data['timestamp']) #ermmm
-    # model_url = data['model_url']
-    # model_version = data['model_version'] #este atributo probablemente no vaya xd
+    esp32_mac_address = data['controller_id']
+    statuses = data['status']      # Estado actual de cada casillero
+    changes = data['changed']      # Índices que indican los casilleros que cambiaron
+    timestamp = Time.parse(data['time'])
 
     controller = Controller.find_by(esp32_mac_address: esp32_mac_address)
     # model = Model.find_by(url: model_url)
@@ -57,26 +55,33 @@ class MqttService
 
     controller.update!(last_seen_at: timestamp) # el mac address no deberia cambiar!!
 
-    controller.lockers.each_with_index do |locker, index|
-      locker.update!(
-        password: lockers_passwords[index], 
-        is_locked: lockers_status[index]
-      )
+     changes.each_with_index do |changed, index|
+      next unless changed == 1  # Solo procesa casilleros que cambiaron (indicado con 1)
+
+      locker = controller.lockers[index]
+      next unless locker  # Si no se encuentra el casillero, omite
+
+      # Actualiza el estado del casillero en la base de datos
+      locker.update!(is_locked: statuses[index] == 1)
+
+      # Llama a `process_locker_opening_message` para registrar la apertura
+      process_locker_opening_message({
+        'esp32_mac_address' => esp32_mac_address,
+        'locker_id' => locker.name,
+        'time' => timestamp.iso8601,
+        'status' => statuses[index] == 1 ? 'cerrado' : 'abierto'
+      })
     end
 
-    # model.update!(
-    #   url: model_url
-    #   version: model_version, # sacar esto si es que no ponemos version al modelo
-    # ) if model
-
-    Rails.logger.info "Estado del controlador #{esp32_mac_address} actualizado exitosamente."
-
+    Rails.logger.info "Estado del controlador #{esp32_mac_address} y casilleros actualizado exitosamente."
   end
 
   def self.process_message(topic, message)
-    payload = JSON.parse(message)
+    # Convierte `message` en hash si no lo es
+    payload = message.is_a?(String) ? JSON.parse(message) : message
+
     if topic.include?("status")
-      process_locker_opening_message(payload)
+      process_status_message(payload)
     end
   rescue JSON::ParserError => e
     Rails.logger.error "Error al parsear JSON: #{e.message}"
