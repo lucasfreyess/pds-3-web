@@ -2,6 +2,8 @@ class ControllersController < ApplicationController
   
   before_action :authenticate_user!
   before_action :authorize_user, only: [:show]
+  #before_action :is_admin, only: [:new, :create]
+  #before_action :is_not_admin
 
   # GET /controllers
   def index

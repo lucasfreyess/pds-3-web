@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   
   before_action :authenticate_user!
+  #before_action :is_not_admin
 
   def update
     @user = User.find(params[:id])

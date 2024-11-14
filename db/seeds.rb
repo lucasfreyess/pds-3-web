@@ -27,10 +27,9 @@ modelo_2 = Model.create!(
 
 user_1 = User.create!(
   name: 'Admin',
-  email: 'lucas@gmail.com',
+  email: 'admin@gmail.com',
   password: '123456',
   is_admin: true,
-  model: modelo_1
 )
 
 controller_1 = Controller.create!(

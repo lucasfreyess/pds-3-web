@@ -24,8 +24,14 @@ class User < ApplicationRecord
   end
 
   def self.from_google(u)
-    create_with(uid: u[:uid], provider: 'google',
+
+    if u[:email] == "lfreyes1@miuandes.cl"
+      create_with(uid: u[:uid], provider: 'google',
+                password: Devise.friendly_token[0, 20], is_admin: true).find_or_create_by!(email: u[:email])
+    else
+      create_with(uid: u[:uid], provider: 'google',
                 password: Devise.friendly_token[0, 20]).find_or_create_by!(email: u[:email])
+    end
   end
 
   def locker_openings_last_7_days
