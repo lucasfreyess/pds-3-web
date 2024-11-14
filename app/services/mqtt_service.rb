@@ -34,7 +34,8 @@ class MqttService
   # metodo para procesar mensajes de estado de controladores
   # desde el topic de status del broker MQTT!!
   def self.process_status_message(payload)
-
+    Rails.logger.info "Mensaje recibido: #{payload}"
+    Rails.logger.info "Tipo de dato del payload: #{payload.class}"
     data = payload.is_a?(String) ? JSON.parse(payload) : payload
 
     esp32_mac_address = data['controller_id']
