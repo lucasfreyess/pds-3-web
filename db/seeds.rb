@@ -123,7 +123,7 @@ end
 
 5.times do |i|
 
-  Gesture.create!(
+  gesture = Gesture.create!(
     name: "#{i}",
     description: "Gesture #{i} description",
     model: modelo_3
