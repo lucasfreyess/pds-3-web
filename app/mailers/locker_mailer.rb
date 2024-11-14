@@ -30,6 +30,7 @@ class LockerMailer < ApplicationMailer
     end
 
     mail(to: @owner, subject: 'Actualización de tu casillero')
+    puts "EMAIL DE ACTUALIZACION DE CLAVES DE CASILLERO ENVIADO..."
   end
 
   def locker_opening_notification(locker)
@@ -44,6 +45,7 @@ class LockerMailer < ApplicationMailer
     end
 
     mail(to: @owner, subject: 'Tu casillero ha sido abierto')
+    puts "EMAIL DE APERTURA DE CASILLERO ENVIADO..."
 
   end
 end

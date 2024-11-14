@@ -16,7 +16,6 @@ class LockerOpening < ApplicationRecord
   private
 
   def send_locker_opening_email
-    puts "ENVIANDO EMAIL DE APERTURA DE CASILLERO..."
     LockerMailer.locker_opening_notification(self.locker).deliver_later
   end
 
