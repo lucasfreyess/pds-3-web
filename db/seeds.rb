@@ -24,7 +24,10 @@ modelo_2 = Model.create!(
   name: 'Model 2',
   description: 'Model 2 description'
 )
-
+modelo_3 = Model.create!(
+  name: 'Model 3',
+  description: 'Model 3 description'
+)
 user_1 = User.create!(
   name: 'Admin',
   email: 'lucas@gmail.com',
@@ -44,6 +47,11 @@ controller_2 = Controller.create!(
   esp32_mac_address: '00:00:00:00:00:02',
 )
 
+controller_3 = Controller.create!(
+  name: 'ESP',
+  esp32_mac_address: 'ccdba7563174',
+)
+
 4.times do |i|
 
   Locker.create!(
@@ -60,6 +68,16 @@ end
     name: "Locker #{i+1}",
     description: "Locker #{i+1} description",
     controller: controller_2
+  )
+
+end
+
+3.times do |i|
+  
+  Locker.create!(
+    name: "Locker #{i+1}",
+    description: "Locker #{i+1} description",
+    controller: controller_3
   )
 
 end
@@ -99,6 +117,16 @@ seven.image.attach(io: File.open(Rails.root.join('app/assets/images/7.png')), fi
     name: "Gesture #{i+8}",
     description: "Gesture #{i+8} description",
     model: modelo_2
+  )
+
+end
+
+7.times do |i|
+
+  Gesture.create!(
+    name: "#{i}",
+    description: "Gesture #{i} description",
+    model: modelo_3
   )
 
 end
