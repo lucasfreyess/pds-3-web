@@ -75,7 +75,7 @@ end
 3.times do |i|
   
   Locker.create!(
-    name: "Locker #{i+1}",
+    name: "#{i+1}",
     description: "Locker #{i+1} description",
     controller: controller_3
   )
