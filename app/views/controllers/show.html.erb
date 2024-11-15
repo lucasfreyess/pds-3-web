@@ -15,8 +15,8 @@
       </h5>
 
       <h6 class="custom-card-subtitle">
-        <% if @controller.user.model.present? %>
-          usando <%= @controller.user.model.name %>
+        <% if @model.present? %>
+          usando <%= @model.name %>
         <% else %>
           No hay modelo disponible
         <% end %>
@@ -53,7 +53,7 @@
     </div>
 
     <ul class="list-group list-group-flush">
-      <% @controller.lockers.each do |locker| %>
+      <% @lockers.each do |locker| %>
         <li class="list-group-item d-flex justify-content-between align-items-center">
           <%= locker.name %> - <%= locker.owner_email.present? ? 
             locker.owner_email 

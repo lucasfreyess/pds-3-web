@@ -17,7 +17,7 @@ class ControllersController < ApplicationController
   def show
     @controller = Controller.find(params[:id])
     @model = @controller.user.model
-    @lockers = @controller.lockers
+    @lockers = @controller.lockers.order(:id)
     @connected = @controller.last_seen_at && (Time.current - @controller.last_seen_at) <= 10.minutes
     if @connected
       flash[:notice] = "¡Conexión exitosa!"
