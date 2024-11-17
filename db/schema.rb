@@ -67,7 +67,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_13_200819) do
     t.datetime "opened_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "was_succesful"
+    t.boolean "was_succesful", default: false
     t.index ["locker_id"], name: "index_locker_openings_on_locker_id"
   end
 

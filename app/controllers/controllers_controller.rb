@@ -19,7 +19,7 @@ class ControllersController < ApplicationController
   def show
     @controller = Controller.find(params[:id])
     @model = @controller.user.model
-    @lockers = @controller.lockers
+    @lockers = @controller.lockers.order(:id)
     @connected = @controller.last_seen_at && (Time.current - @controller.last_seen_at) <= 10.minutes
     if @connected
       flash[:notice] = "¡Conexión exitosa!"
@@ -94,7 +94,7 @@ class ControllersController < ApplicationController
 
     # Publicación de las claves iniciales para cada locker
     @controller.lockers.each_with_index do |locker, index|
-      password_topic = "controladores/#{controller_id}/locker_#{locker.id}/clave"
+      password_topic = "controladores/#{controller_id}"
       MQTT_CLIENT.publish(password_topic, locker.password)
     end
 

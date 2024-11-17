@@ -88,8 +88,8 @@ Rails.application.configure do
     address: "smtp.gmail.com",
     port: 587,
     domain: "localhost",
-    user_name: "lucas.reyes.salazar@gmail.com",
-    password: "qhas gxgi fxgb qxkk",
+    user_name: "proyectoiisgrupo5@gmail.com",
+    password: "btir ztwy vgfv jtxb",
     authentication: :login,
     enable_starttls_auto: true
   }
@@ -100,5 +100,7 @@ Rails.application.configure do
   }
 
   config.hosts << "pds3equipo5.duckdns.org"
+
+  config.web_console.permissions = '177.154.174.218' # pal digital ocean
 
 end

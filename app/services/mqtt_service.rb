@@ -1,20 +1,50 @@
 class MqttService
+  BROKER_URL = 'test.mosquitto.org'
 
+  def self.start
+    Thread.new do
+      loop do
+        begin
+          MQTT::Client.connect(host: BROKER_URL, port: 1883, keep_alive: 60) do |client|
+            topic = "controladores/locker/status"
+            client.subscribe(topic)
+
+            puts "Suscrito al topic #{topic}"
+            
+            client.get do |topic, message|
+              begin
+                process_message(topic, message)
+              rescue StandardError => e
+                Rails.logger.error "Error al procesar mensaje MQTT: #{e.message}"
+              end
+            end
+          end
+        rescue MQTT::ProtocolException => e
+          Rails.logger.error "MQTT::ProtocolException: #{e.message}. Reintentando en 5 segundos..."
+          sleep(5) # Espera antes de intentar reconectar
+          retry
+        rescue StandardError => e
+          Rails.logger.error "Error en MQTT: #{e.message}"
+          sleep(5)
+          retry
+        end
+      end
+    end
+  end
   # metodo para procesar mensajes de estado de controladores
   # desde el topic de status del broker MQTT!!
   def self.process_status_message(payload)
+    Rails.logger.info "Mensaje recibido: #{payload}"
+    Rails.logger.info "Tipo de dato del payload: #{payload.class}"
+    data = payload.is_a?(String) ? JSON.parse(payload) : payload
 
-    data = JSON.parse(payload)
-
-    esp32_mac_address = data['esp32_mac_address']
-    lockers_passwords = data['lockers_passwords']
-    lockers_status = data['lockers_status']
-    timestamp = Time.parse(data['timestamp']) #ermmm
-    model_url = data['model_url']
-    model_version = data['model_version'] #este atributo probablemente no vaya xd
+    esp32_mac_address = data['controller_id']
+    statuses = data['status']      # Estado actual de cada casillero
+    changes = data['changed']      # Índices que indican los casilleros que cambiaron
+    timestamp = Time.parse(data['time'])
 
     controller = Controller.find_by(esp32_mac_address: esp32_mac_address)
-    model = Model.find_by(url: model_url)
+    # model = Model.find_by(url: model_url)
 
     unless controller
       Rails.logger.error "Controller with MAC address #{esp32_mac_address} not found. Aborting message processing."
@@ -26,53 +56,60 @@ class MqttService
 
     controller.update!(last_seen_at: timestamp) # el mac address no deberia cambiar!!
 
-    controller.lockers.each_with_index do |locker, index|
-      locker.update!(
-        password: lockers_passwords[index], 
-        is_locked: lockers_status[index]
-      )
+     changes.each_with_index do |changed, index|
+      next unless changed == 1  # Solo procesa casilleros que cambiaron (indicado con 1)
+
+      locker = controller.lockers[index]
+      next unless locker  # Si no se encuentra el casillero, omite
+
+      # Actualiza el estado del casillero en la base de datos
+      locker.update!(is_locked: statuses[index] == 0)
+
+      # Llama a `process_locker_opening_message` para registrar la apertura
+      process_locker_opening_message({
+        'esp32_mac_address' => esp32_mac_address,
+        'locker_id' => locker.name,
+        'time' => timestamp.iso8601,
+        'status' => statuses[index] == 0 ? 'cerrado' : 'abierto'
+      })
     end
 
-    model.update!(
-      url: model_url
-      version: model_version, # sacar esto si es que no ponemos version al modelo
-    ) if model
+    Rails.logger.info "Estado del controlador #{esp32_mac_address} y casilleros actualizado exitosamente."
+  end
 
-    Rails.logger.info "Estado del controlador #{esp32_mac_address} actualizado exitosamente."
+  def self.process_message(topic, message)
+    # Convierte `message` en hash si no lo es
+    payload = message.is_a?(String) ? JSON.parse(message) : message
 
+    if topic.include?("status")
+      process_status_message(payload)
+    end
+  rescue JSON::ParserError => e
+    Rails.logger.error "Error al parsear JSON: #{e.message}"
   end
 
   # metodo para crear LockerOpenings desde mensajes de apertura
   # de casilleros desde el topic de openings del broker MQTT!!
   def self.process_locker_opening_message(payload)
-      
-    data = JSON.parse(payload)
-
-    esp32_mac_address = data['esp32_mac_address']
-    # probablemente deberia hacer que locker.name sea unico dentro de un controlador
-    locker_name = data['locker_name']
-    timestamp = Time.parse(data['timestamp'])
+    esp32_mac_address = payload['esp32_mac_address']
+    locker_name = payload['locker_id']
+    timestamp = Time.parse(payload['time'])
+    status = payload['status']
 
     controller = Controller.find_by(esp32_mac_address: esp32_mac_address)
-    locker = Locker.find_by(controller: controller, password: locker_password)
+    locker = controller&.lockers&.find_by(name: locker_name)
 
-    unless controller
-      Rails.logger.error "Controller with MAC address #{esp32_mac_address} not found. Aborting locker_opening message processing."
+    unless controller && locker
+      Rails.logger.error "Controller o Locker no encontrados para el mensaje recibido."
       return
     end
 
-    unless locker
-      Rails.logger.error "Locker with password #{locker_password} not found. Aborting locker_opening message processing."
-      return
+    if status == "abierto"
+      LockerOpening.create!(locker: locker, opened_at: timestamp)
+      Rails.logger.info "Apertura de casillero #{locker_name} registrada exitosamente."
+    else
+      Rails.logger.info "Estado recibido no es de apertura: #{status}"
     end
-
-    locker_opening = LockerOpening.create!(
-      locker: locker,
-      opened_at: timestamp
-    )
-
-    Rails.logger.info "Apertura de casillero #{locker_password} registrada exitosamente."
-
   end
 end
 
