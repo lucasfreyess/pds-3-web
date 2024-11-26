@@ -43,4 +43,9 @@ class Controller < ApplicationRecord
     MQTT_CLIENT.publish(MQTT_TOPIC_PASSWORDS, payload)
   end
 
+  # determina si el controlador esta activo
+  def is_active
+    self.last_seen_at >= 10.minutes.ago
+  end
+
 end

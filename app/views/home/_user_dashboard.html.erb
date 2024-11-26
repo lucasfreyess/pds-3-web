@@ -5,43 +5,69 @@
 <% else %>
   <div>
     <br />
-    <!-- Aperturas de casilleros!!!-->
+    
     <div style="text-align: center;">
       <h2>Aperturas de Casilleros de los Últimos 7 Días</h2>
+      <br/>
+      <p> falta una metrica!! o ninguna si es se cuentan las aperturas correctas y fallidas como separadas</p>
     </div>
 
     <br />
 
-    <% @locker_openings_by_day[:successful].each do |date, success_count| %>
-      <% failed_count = @locker_openings_by_day[:failed][date] || 0 %>
-      
+    <!-- Aperturas de casilleros!!!-->
+    <% if @locker_openings_by_day[:successful].empty? && @locker_openings_by_day[:failed].empty? %>
       <div class="custom-card mx-auto">
         <div class="card-body">
           <div style="text-align: center;">
             <h5 class="custom-card-title">
-              <%= date.strftime("%A, %d %B %Y") %>
+              No hay aperturas de casilleros en los últimos 7 días
             </h5>
-          </div>
-          
-          <div class="row">
-            <div class="col-md-6">
-              <p class="text-success mb-1"><strong>Aperturas Exitosas:</strong> <%= success_count %></p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <p class="text-danger mb-1"><strong>Aperturas Fallidas:</strong> <%= failed_count %></p>
-            </div>
-          </div>
           </div>
         </div>
       </div>
-    <% end %>
+    <% else %>
+      <% all_dates = (@locker_openings_by_day[:successful].keys + @locker_openings_by_day[:failed].keys).uniq %>
+
+      <% all_dates.each do |date| %>
+        <% success_count = @locker_openings_by_day[:successful][date] || 0 %>
+        <% failed_count = @locker_openings_by_day[:failed][date] || 0 %>
+
+        <div class="custom-card mx-auto">
+          <div class="card-body">
+            
+            <div style="text-align: center;">
+              <h5 class="custom-card-title">
+                <%= date.strftime("%A, %d %B %Y") %>
+              </h5>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <p class="text-success mb-1">
+                  <strong>Aperturas Exitosas:</strong> <%= success_count %>
+                </p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <p class="text-danger mb-1">
+                  <strong>Aperturas Fallidas:</strong> <%= failed_count %>
+                </p>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      <% end %>
+
+    <%end%>
 
     <hr />
 
     <!-- el casillero mas abierto de los ultimos siete dias!!-->
     <div class="custom-card mx-auto">
+      
       <div class="card-body">
         <div style="text-align: center;">
           <h5 class="custom-card-title">
@@ -56,11 +82,17 @@
                 <strong>
                   Nombre:
                 </strong> 
-                <%= @most_opened_locker.name %>
+                "<%= @most_opened_locker.name %>"
+                (del controlador <%= link_to @most_opened_locker.controller.name, controller_path(@most_opened_locker.controller) %>)
+              </p>
+            <% else %>
+              <p class="mb-1">
+                No hay casilleros abiertos en los últimos 7 días
               </p>
             <% end %>
           </div>
         </div>
+
         <div class="row">
           <div class="col-md-6">
             <% if @most_opened_locker %>
@@ -72,6 +104,7 @@
             <% end %>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -80,6 +113,7 @@
     <!-- numero de dueños unicos que han abierto sus casilleros en los ultimos siete dias-->
     <div class="custom-card mx-auto">
       <div class="card-body">
+        
         <div style="text-align: center;">
           <h5 class="custom-card-title">
             Número de Dueños Únicos que han Abierto sus Casilleros en los Últimos 7 Días
@@ -96,6 +130,7 @@
             </p>
           </div>
         </div>
+
       </div>
     </div>
     

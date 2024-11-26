@@ -20,12 +20,13 @@
     background-color: #f8f9fa; /* Color de fondo claro */
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 20px;
+    padding: 30px;
     margin: 20px auto;
     margin-left: 50px;
     margin-right: 50px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
     width: 70%;
+    //padding-bottom: 50px;
   }
   
   .custom-card-title {
@@ -57,3 +58,12 @@
     background-color: #0a5bb8;
   }
   
+  hr {
+    width: 75%;
+    //margin-left: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    //margin-right: 200px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
