@@ -1,0 +1,39 @@
+<div>
+  <div style="text-align: center;">
+    <br />
+    <% if @controllers.nil? %>
+      <h1>No existen controladores.</h1>
+    <% else %>
+      <h1>Revisa todos los controladores!</h1>
+    <% end %>
+    <br />
+    
+    <a class="btn btn-success btn-lg" href="/controllers/new"> 
+      Crea un Controlador!
+    </a> 
+
+    <br />
+
+    <p> en estricto rigor, creo que, en la web, un controlador es creado cuando el espwroom manda un mensaje mqtt a un topico q sea llamado "registrar_controlador", o algo asi... se recibe el mensaje, junto con el mac address, y se crea el controlador en el front. la idea es que dicho mensaje tenga tambien los lockers y sus nombres </p>
+    
+  </div>
+
+  <br />
+
+  <% @controllers.each do |controller|%>
+    <div class="custom-card mx-auto">
+      <div class="card-body">
+        
+        <h5 class="custom-card-title">
+          <%= controller.name %>
+        </h5>
+        
+        <p class="custom-card-text">
+          con <%= controller.locker_count %> casilleros.
+        </p>
+        
+        <%= link_to 'Ver', controller_path(controller), class: 'btn btn-info' %>
+      </div>
+    </div>
+  <% end %>
+</div>

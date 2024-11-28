@@ -1,27 +1,29 @@
 <div>
   <div style="text-align: center;">
     <br />
-    <h1>Gestión de Modelos</h1>
+    <h1>Revisa todos los Modelos!</h1>
+
+    <br />
+    <%= link_to 'Crea un nuevo Modelo!', new_model_path, class: 'btn btn-success btn-lg' %>
   </div>
 
   <br />
-
-  <div class="text-center mt-4">
-    <%= link_to 'Crear Nuevo Modelo', new_model_path, class: 'btn btn-primary' %>
-  </div>
-
-  <br />
-
+  
   <% @models.each do |model| %>
     <div class="custom-card mx-auto">
       <div class="card-body">
-        <h5 class="custom-card-title"><%= model.name %></h5>
-        <h6>con <%= model.gesture_count %> gestos</h6>
+        
+        <h5 class="custom-card-title">
+          <%= model.name %>
+        </h5>
+        
+        <h6>
+          con <%= model.gesture_count %> gestos
+        </h6>
         
         <%= link_to 'Ver', model_path(model), class: 'btn btn-info' %>
       </div>
     </div>
   <% end %>
 
-  
 </div>

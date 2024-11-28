@@ -1,9 +1,10 @@
 class Model < ApplicationRecord
 
   has_many :controllers, class_name: "Controller"
-  has_many :gestures, class_name: "Gesture"
+  has_many :gestures, class_name: "Gesture", dependent: :destroy
   has_many :users, class_name: "User"
   
+  accepts_nested_attributes_for :gestures, allow_destroy: true
 
   validates :name, presence: { message: "Model name can't be blank" }
   validates :description, presence: { message: "Model description must be provided." }

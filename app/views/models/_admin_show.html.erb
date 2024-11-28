@@ -1,0 +1,64 @@
+<br />
+<div class="custom-card mx-auto">
+  <div class="card-body">
+   
+    <h5 class="custom-card-title">
+      <%= @model.name %>
+    </h5>
+
+    <h6>
+      <% if current_user.model == @model %>
+        Estas usando este Modelo
+      <% else %>
+        No estas usando este Modelo
+      <% end %>
+    </h6>
+    
+    <p class="custom-card-text">
+      
+      El modelo tiene <%= @model.gesture_count %> gestos:<br />
+      <ul>
+        <% @model.gestures.each do |gesture| %>
+          <li>
+            <%= gesture.name %>, <%= gesture.description if gesture.description? %>
+          </li>
+        <% end %>
+      </ul>
+
+    </p>
+    
+    
+  </div>
+</div>
+
+<hr />
+
+<!--Usuarios que estan usando este modelo-->
+<div class="custom-card mx-auto">
+  <div class="card-header">
+    <h5 class="custom-card-title">
+      Usuarios que estan usando este modelo
+    </h5>
+  </div>
+
+  <% if @model.users.empty?%>
+    <div class="card-body">
+      <h6 class="card-title">No hay usuarios usando este modelo</h6>
+    </div>
+  <% else %>
+    <ul class="list-group list-group-flush">
+      <% @model.users.each do |user| %>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <%= user.email %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>
+
+<div style="text-align: center;">
+  <br />
+  <%= link_to 'Volver', models_path, class: 'btn btn-info btn-lg' %>
+<div>
+
+<br />

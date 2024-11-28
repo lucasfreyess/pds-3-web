@@ -8,8 +8,7 @@ class Gesture < ApplicationRecord
   before_create :increment_gesture_count
 
   validates :name, presence: { message: "of Gesture must be provided" }
-  #validates :description, presence: { message: "of Gesture must be at least Blank" }
-  validates :model_id, presence: { message: "of Gesture must be present" }
+  validates :description, presence: { message: "of Gesture must be at least Blank" }, on: :update
   
   validate :print_errors
 

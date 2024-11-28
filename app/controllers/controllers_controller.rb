@@ -7,7 +7,11 @@ class ControllersController < ApplicationController
 
   # GET /controllers
   def index
-    @controllers = Controller.where(user_id: current_user.id)
+    if current_user.is_admin
+      @controllers = Controller.all
+    else
+      @controllers = Controller.where(user_id: current_user.id)
+    end
   end
 
   # GET /controllers/available
@@ -18,13 +22,35 @@ class ControllersController < ApplicationController
   # GET /controllers/:id
   def show
     @controller = Controller.find(params[:id])
-    @model = @controller.user.model
+    if @controller.user
+      @model = @controller.user.model
+    else
+      @model = nil
+    end
+
     @lockers = @controller.lockers.order(:id)
     @connected = @controller.last_seen_at && (Time.current - @controller.last_seen_at) <= 10.minutes
     if @connected
       flash[:notice] = "¡Conexión exitosa!"
     else
       flash[:alert] = "No se pudo conectar al controlador."
+    end
+  end
+
+  # GET /controllers/new
+  def new
+    @controller = Controller.new
+    @controller.lockers.build
+  end
+
+  # POST /controllers
+  def create
+    @controller = Controller.new(controller_locker_params)
+
+    if @controller.save
+      redirect_to controllers_path, notice: "Controlador creado correctamente."
+    else
+      render :new, alert: "Hubo un error al crear el controlador."
     end
   end
 
@@ -78,12 +104,16 @@ class ControllersController < ApplicationController
   def controller_locker_params
     params.require(:controller).permit(
       :name,
+      :esp_32_mac_address,
       lockers_attributes: [:id, :name]
     )
   end
 
   def authorize_user
     controller = Controller.find(params[:id])
+
+    return if current_user.is_admin
+
     unless controller.user_id == current_user.id
       redirect_to controllers_path, alert: "No tienes permisos para ver este controlador."
     end
