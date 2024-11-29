@@ -1,6 +1,5 @@
 <div>
   <div style="text-align: center;">
-    <br />
     <h1>
       Verifica o desvincula tu controlador
     </h1>
@@ -33,19 +32,22 @@
 
       <!-- Contenedor con display flex para los botones -->
       <div class="d-flex justify-content-end mt-3">
-        <!-- Verificar estado de conexión -->
+
+        <% if @model.present? %>
+          <%= link_to 'Ver Modelo', model_path(@model), class: 'btn btn-primary me-2' %>
+        <% else %>
+          <%= link_to 'Modelos', models_path, class: 'btn btn-primary me-2' %>
+        <% end %>
+        
         <%= link_to 'Verificar conexión', controller_path(@controller), method: :get, class: 'btn btn-info me-2' %>
 
-        <!-- Botón para redirigir a la lista de modelos -->
-        <%= link_to 'Modelos', models_path, class: 'btn btn-primary me-2' %>
-
-        <!-- Desvincular el controlador del usuario -->
         <%= button_to 'Desvincular', unlink_from_user_controller_path(@controller), method: :patch, data: { confirm: '¿Estás seguro de que quieres desvincular este controlador?' }, class: 'btn btn-danger' %>
       </div>
     </div>
   </div>
 
   <div class="custom-card mx-auto">
+    
     <div class="card-header">
       <h5 class="custom-card-title">
         Casilleros

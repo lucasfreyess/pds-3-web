@@ -1,12 +1,17 @@
 class ModelsController < ApplicationController
 
   before_action :authenticate_user!
-  #before_action :check_admin, only: [:new, :create]
+  before_action :check_admin, only: [:new, :create]
 
   # GET /models
   def index
-    @models = Model.all
-  end
+    if current_user.is_admin
+      @models = Model.all
+    else
+      # magia de sql para obtener primero el modelo del usuario!!
+      @models = Model.all.order(Arel.sql("id = #{current_user.model_id} DESC"))
+    end
+  end 
 
   # GET /models/:id
   def show
@@ -26,14 +31,28 @@ class ModelsController < ApplicationController
     puts "Received params: #{params.inspect}" # Esto te muestra todos los parámetros recibidos en la consola.
   
     if @model.save
-      redirect_to models_path, notice: 'Modelo creado exitosamente.'
+      flash[:success] = 'Modelo creado exitosamente.'
+      redirect_to models_path#, notice: 'Modelo creado exitosamente.'
     else
       puts "Model errors: #{@model.errors.full_messages}" # Depura los errores de validación
+      flash[:danger] = 'Error al crear el Modelo.'
       render :new, status: :unprocessable_entity
     end
   end
-  
 
+  # DELETE /models/:id
+  def destroy
+    model = Model.find(params[:id])
+    
+    if model.destroy!
+      flash[:success] = 'Modelo eliminado exitosamente.'
+      redirect_to models_path#, notice: 'Modelo eliminado exitosamente.'
+    else
+      flash[:danger] = 'Error al eliminar el Modelo; Existen usuarios asociados.'
+      redirect_to model_path(model)#, alert: 'Error al eliminar el Modelo.'
+    end
+  end
+  
   # POST /models/:id/update_user_model
   def update_user_model
     model = Model.find(params[:model_id])
@@ -41,7 +60,8 @@ class ModelsController < ApplicationController
     #update_lockers_password_if_model_changed para cada controlador del usuario
     current_user.update(model: model)
 
-    redirect_to model_path(model), notice: 'Tu Modelo ha sido actualizado!'
+    flash[:success] = 'Tu Modelo ha sido actualizado exitosamente.'
+    redirect_to model_path(model)#, notice: 'Tu Modelo ha sido actualizado!'
   end
 
   private
@@ -55,9 +75,10 @@ class ModelsController < ApplicationController
       gestures_attributes: [:id, :name, :description, :image, :_destroy])
   end
 
-  #def check_admin
-  #  unless current_user.is_admin?
-  #    redirect_to models_path, alert: 'No tienes permiso para realizar esta acción.'
-  #  end
-  #end
+  def check_admin
+    unless current_user.is_admin?
+      flash[:warning] = 'No tienes permiso para realizar esta acción.'
+      redirect_to models_path#, alert: 'No tienes permiso para realizar esta acción.'
+    end
+  end
 end

@@ -1,18 +1,9 @@
-<br />
 <div class="custom-card mx-auto">
   <div class="card-body">
    
     <h5 class="custom-card-title">
       <%= @model.name %>
     </h5>
-
-    <h6>
-      <% if current_user.model == @model %>
-        Estas usando este Modelo
-      <% else %>
-        No estas usando este Modelo
-      <% end %>
-    </h6>
     
     <p class="custom-card-text">
       
@@ -27,7 +18,9 @@
 
     </p>
     
-    
+    <% if @model.users.empty? %>  
+      <%= link_to 'Eliminar Modelo', model_path(@model), data: { turbo_confirm: '¿Estás seguro de que deseas eliminar este modelo?', turbo_method: "delete" }, class: 'btn btn-danger' %>
+    <% end %>
   </div>
 </div>
 
