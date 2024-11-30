@@ -37,9 +37,10 @@ Rails.application.routes.draw do
   #resources :models, only: [:index, :show, ] do
   resources :models do
   
-    #member do
-    #  post 'update_user_model', to: 'models#update_user_model', as: :update_user_model
-    #end
+    member do
+      #post 'update_user_model', to: 'models#update_user_model', as: :update_user_model
+      get 'json', to: 'models#json', as: :json
+    end
   end
 
   resources :lockers, only: [:edit, :update]

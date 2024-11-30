@@ -3,6 +3,29 @@ class ModelsController < ApplicationController
   before_action :authenticate_user!
   before_action :check_admin, only: [:new, :create]
 
+  # GET /models/:id/json
+  def json
+    model = Model.find(params[:id])
+    #render json: model.to_json(include: :gestures, except: [:created_at, :updated_at])
+    
+    render json: {
+      model: model.as_json(include: {
+        gestures: {
+          except: [:created_at, :updated_at, :model_id]
+        }
+        #model_file: model.model_file.attached? ? Base64.encode64(model.model_file.download) : nil
+        # lo siguiente hacia papugpt en el modelo del model xd
+        # file: model_file&.download&.force_encoding('UTF-8') # Contenido del archivo subido
+      },
+      except: [:created_at, :updated_at]
+      ).merge(
+        file: model.model_file.attached? ? model.model_file&.download&.force_encoding('UTF-8') : nil# Contenido del archivo subido
+      )
+    }, 
+    status: :ok
+  
+  end
+
   # GET /models
   def index
     if current_user.is_admin
@@ -31,6 +54,7 @@ class ModelsController < ApplicationController
     puts "Received params: #{params.inspect}" # Esto te muestra todos los parámetros recibidos en la consola.
   
     if @model.save
+      @model.set_url(request.host_with_port)
       flash[:success] = 'Modelo creado exitosamente.'
       redirect_to models_path#, notice: 'Modelo creado exitosamente.'
     else
@@ -70,8 +94,9 @@ class ModelsController < ApplicationController
     params.require(:model).permit(
       :name, 
       :description, 
-      :url,
+      #:url,
       :version,
+      :model_file,
       gestures_attributes: [:id, :name, :description, :image, :_destroy])
   end
 

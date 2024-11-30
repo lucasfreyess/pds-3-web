@@ -28,6 +28,19 @@
     width: 70%;
     //padding-bottom: 50px;
   }
+
+  .custom-card-small {
+    background-color: #f8f9fa; /* Color de fondo claro */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 30px;
+    margin: 20px auto;
+    margin-left: 50px;
+    margin-right: 50px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    width: 100%;//no entiendo esto xd
+    //padding-bottom: 50px;
+  }
   
   .custom-card-title {
     font-weight: bold;

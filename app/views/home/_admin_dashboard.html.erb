@@ -43,60 +43,62 @@
 
   <hr />
 
-  <div style="text-align: center;">
-    <h2>
-      Aperturas de Casilleros de los Últimos 7 Días
-    </h2>
-  </div>
-
-  <!--Cantidad de Aperturas totales de Casilleros por dia, para los ultimos siete dias-->
-  <% if @locker_openings_by_day[:successful].empty? && @locker_openings_by_day[:failed].empty? %>
-    <div class="custom-card mx-auto">
-      <div class="card-body">
-        <div style="text-align: center;">
-          <h5 class="custom-card-title">
-            No hay aperturas de casilleros en los últimos 7 días
-          </h5>
-        </div>
-      </div>
+  <div class="custom-card mx-auto">
+    <div style="text-align: center;">
+      <h2>
+        Aperturas de Casilleros de los Últimos 7 Días
+      </h2>
     </div>
-  <% else %>
-    <% all_dates = (@locker_openings_by_day[:successful].keys + @locker_openings_by_day[:failed].keys).uniq %>
 
-    <% all_dates.each do |date| %>
-      <% success_count = @locker_openings_by_day[:successful][date] || 0 %>
-      <% failed_count = @locker_openings_by_day[:failed][date] || 0 %>
-
-      <div class="custom-card mx-auto">
+    <!--Cantidad de Aperturas totales de Casilleros por dia, para los ultimos siete dias-->
+    <% if @locker_openings_by_day[:successful].empty? && @locker_openings_by_day[:failed].empty? %>
+      <div class="custom-card-small mx-auto">
         <div class="card-body">
-          
           <div style="text-align: center;">
             <h5 class="custom-card-title">
-              <%= date.strftime("%A, %d %B %Y") %>
+              No hay aperturas de casilleros en los últimos 7 días
             </h5>
           </div>
-          
-          <div class="row">
-            <div class="col-md-6">
-              <p class="text-success mb-1">
-                <strong>Aperturas Exitosas:</strong> <%= success_count %>
-              </p>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6">
-              <p class="text-danger mb-1">
-                <strong>Aperturas Fallidas:</strong> <%= failed_count %>
-              </p>
-            </div>
-          </div>
-          
         </div>
       </div>
+    <% else %>
+      <% all_dates = (@locker_openings_by_day[:successful].keys + @locker_openings_by_day[:failed].keys).uniq %>
+
+      <% all_dates.each do |date| %>
+        <% success_count = @locker_openings_by_day[:successful][date] || 0 %>
+        <% failed_count = @locker_openings_by_day[:failed][date] || 0 %>
+
+        <div class="custom-card-small mx-auto">
+          <div class="card-body">
+            
+            <div style="text-align: center;">
+              <h5 class="custom-card-title">
+                <%= date.strftime("%A, %d %B %Y") %>
+              </h5>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <p class="text-success mb-1">
+                  <strong>Aperturas Exitosas:</strong> <%= success_count %>
+                </p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <p class="text-danger mb-1">
+                  <strong>Aperturas Fallidas:</strong> <%= failed_count %>
+                </p>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      <% end %>
     <% end %>
-  <% end %>
-  
+  </div>
+
   <hr />
 
   <!--Modelo mas usado de los ultimos siete dias-->
