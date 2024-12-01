@@ -1,0 +1,165 @@
+<!--mucho codigo repetido del new!!-->
+<div style="text-align: center;">
+  <h1> 
+    Editar Modelo 
+  </h1>
+  <br/>
+</div>
+
+<%= form_with model: @model, url: model_path(@model), local: true, method: :patch, html: { multipart: true, class: "needs-validation" } do |f| %>
+  <div class="custom-card mx-auto">
+    
+    <h3 class="mb-3">
+      Información del Modelo
+    </h3>
+    
+    <div class="form-group mb-3">
+      <%= f.label :name, "Nombre del Modelo", class: "form-label fw-bold" %>
+      <%= f.text_field :name, class: "form-control", required: true, placeholder: "Introduce el nombre del modelo" %>
+    </div>
+
+    <div class="form-group mb-3">
+      <%= f.label :description, "Descripción del Modelo", class: "form-label fw-bold" %>
+      <%= f.text_area :description, class: "form-control", required: true, placeholder: "Describe brevemente el modelo" %>
+    </div>
+
+    <div class="form-group mb-3">
+      <%= f.label :model_file, "Actualizar Archivo del Modelo (Hexadecimal)", class: "form-label fw-bold" %>
+      <%= f.file_field :model_file, accept: 'text/*', class: "form-control" %>
+      <% if @model.model_file.attached? %>
+        <small class="form-text text-muted">
+          Archivo actual: <%= link_to @model.model_file.filename.to_s, rails_blob_path(@model.model_file, disposition: "attachment"), target: "_blank" %>
+        </small>
+      <% else %>
+        <small class="form-text text-muted">No hay archivo actual.</small>
+      <% end %>
+    </div>
+
+    <div class="form-group mb-3">
+      <%= f.label :version, "Versión del Modelo", class: "form-label fw-bold" %>
+      <%= f.text_field :version, class: "form-control", required: true, placeholder: "e.g., 1.0.0" %>
+    </div>
+  </div>
+
+  <div class="custom-card mx-auto">
+    
+    <h3 class="mb-3">
+      Gestos Asociados
+    </h3>
+    
+    <div id="gestures">
+      <%= f.fields_for :gestures do |gesture| %>
+        <div class="gesture-fields custom-card-small mx-auto">
+          
+          <%= gesture.hidden_field :_destroy, class: "destroy-field" %>
+          
+          <div class="form-group mb-3">
+            <%= gesture.label :name, "Nombre del Gesto", class: "form-label fw-bold" %>
+            <%= gesture.text_field :name, class: "form-control", required: true, placeholder: "Introduce el nombre del gesto" %>
+          </div>
+
+          <div class="form-group mb-3">
+            <%= gesture.label :description, "Descripción del Gesto", class: "form-label fw-bold" %>
+            <%= gesture.text_area :description, class: "form-control", placeholder: "Describe brevemente el gesto" %>
+          </div>
+
+          <div class="form-group mb-3">
+            <%= gesture.label :image, "Imagen del Gesto", class: "form-label fw-bold" %>
+            <%= gesture.file_field :image, accept: 'image/*', class: "form-control" %>
+            <% if gesture.object.image.attached? %>
+              <small class="form-text text-muted">
+                Imagen actual: <%= link_to "Ver", rails_blob_path(gesture.object.image, disposition: "attachment"), target: "_blank" %>
+              </small>
+            <% end %>
+          </div>
+
+          <button class="btn btn-danger remove-gesture" type="button">
+            <i class="bi bi-trash"></i> Eliminar Gesto
+          </button>
+        </div>
+      <% end %>
+    </div>
+
+    <button id="add-gesture" class="btn btn-primary" type="button">
+      <i class="bi bi-plus-circle"></i> Agregar Gesto
+    </button>
+  </div>
+
+  <div class="row justify-content-center">
+    
+    <div class="col-auto">
+      <%= f.submit "Actualizar Modelo", class: "btn btn-success btn-lg" %>
+    </div>
+    
+    <div class="col-auto">
+      <%= link_to "Volver", models_path, class: "btn btn-secondary btn-lg" %>
+    </div>
+  
+  </div>
+  <br />
+<% end %>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+  const gesturesContainer = document.getElementById("gestures");
+  const addGestureButton = document.getElementById("add-gesture");
+
+  if (gesturesContainer && addGestureButton) {
+    let gestureIndex = gesturesContainer.children.length;
+
+    addGestureButton.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      const newGesture = document.createElement("div");
+      newGesture.classList.add("gesture-fields", "custom-card-small", "mx-auto");
+
+      newGesture.innerHTML = gesturesContainer.children[0].innerHTML.replace(
+        /\[\d+\]/g,
+        `[${gestureIndex}]`
+      );
+
+      const inputs = newGesture.querySelectorAll("input, textarea, .destroy-field");
+      inputs.forEach((input) => {
+        if (input.classList.contains("destroy-field")) {
+          input.value = ""; // Asegura que el campo _destroy esté vacío
+        } else {
+          input.value = "";
+        }
+      });
+
+      gesturesContainer.appendChild(newGesture);
+      gestureIndex++;
+    });
+
+    gesturesContainer.addEventListener("click", (event) => {
+      if (event.target.classList.contains("remove-gesture")) {
+        event.preventDefault();
+
+        const gestureField = event.target.closest(".gesture-fields");
+        const destroyField = gestureField.querySelector(".destroy-field");
+
+        if (gesturesContainer.querySelectorAll(".gesture-fields:not([style*='display: none'])").length > 6) {
+          if (destroyField) {
+            destroyField.value = "true"; // Marca el gesto para ser eliminado
+          }
+          gestureField.style.display = "none"; // Oculta el gesto
+        } else {
+          alert("Debe haber al menos 6 gestos visibles.");
+        }
+      }
+    });
+
+    //validacion de que haya al menos 6 gestos visibles
+    document.querySelector("form").addEventListener("submit", (event) => {
+      const visibleGestures = gesturesContainer.querySelectorAll(".gesture-fields:not([style*='display: none'])").length;
+      
+      if (visibleGestures < 6) {
+        event.preventDefault();
+        alert("Debe haber al menos 6 gestos visibles para guardar el modelo.");
+      }
+    });
+
+  }
+});
+
+</script>

@@ -1,7 +1,7 @@
 class ModelsController < ApplicationController
 
   before_action :authenticate_user!
-  before_action :check_admin, only: [:new, :create]
+  before_action :check_admin, only: [:new, :create, :edit, :update, :destroy]
 
   # GET /models/:id/json
   def json
@@ -61,6 +61,24 @@ class ModelsController < ApplicationController
       puts "Model errors: #{@model.errors.full_messages}" # Depura los errores de validación
       flash[:danger] = 'Error al crear el Modelo.'
       render :new, status: :unprocessable_entity
+    end
+  end
+
+  #GET /models/:id/edit
+  def edit
+    @model = Model.find(params[:id])
+  end
+  
+  # PATCH /models/:id
+  def update
+    @model = Model.find(params[:id])
+    if @model.update(model_params)
+      @model.set_url(request.host_with_port)
+      flash[:success] = 'Modelo actualizado exitosamente.'
+      redirect_to models_path#, notice: 'Modelo actualizado exitosamente.'
+    else
+      flash[:danger] = 'Error al actualizar el Modelo.'
+      render :edit, status: :unprocessable_entity
     end
   end
 

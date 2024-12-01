@@ -8,14 +8,12 @@ class Model < ApplicationRecord
 
   accepts_nested_attributes_for :gestures, allow_destroy: true
 
-  #after_create :set_url
-
   validates :name, presence: { message: "Model name can't be blank" }
   validates :description, presence: { message: "Model description must be provided." }
   #validates :url, presence: { message: "Model URL must be provided." }
   #validates :version, presence: { message: "Model version must be provided." }
   
-  #validate :must_have_at_least_six_gestures
+  validate :minimum_gestures_count
 
   validate :print_errors
 
@@ -31,10 +29,10 @@ class Model < ApplicationRecord
 
   private
 
-  #def must_have_at_least_six_gestures
-  #  if gestures.size < 6
-  #    errors.add(:gestures, "Model must have at least six gestures.")
-  #  end
-  #end
+  def minimum_gestures_count
+    if gestures.reject(&:marked_for_destruction?).size < 6
+      errors.add(:gestures, "deben haber al menos 6 gestos.")
+    end
+  end
 
 end

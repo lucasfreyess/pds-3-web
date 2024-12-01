@@ -18,6 +18,8 @@
 
     </p>
     
+    <%= link_to 'Editar Modelo', edit_model_path(@model), class: 'btn btn-primary' %>
+
     <% if @model.users.empty? %>  
       <%= link_to 'Eliminar Modelo', model_path(@model), data: { turbo_confirm: '¿Estás seguro de que deseas eliminar este modelo?', turbo_method: "delete" }, class: 'btn btn-danger' %>
     <% end %>
