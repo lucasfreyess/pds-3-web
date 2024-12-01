@@ -1,44 +1,105 @@
 <div class="custom-card mx-auto">
   <div class="card-body">
-   
-    <h5 class="custom-card-title">
+    
+    <h3 class="custom-card-title">
       <%= @model.name %>
-    </h5>
-    
+    </h3>
+
     <p class="custom-card-text">
-      
-      El modelo tiene <%= @model.gesture_count %> gestos:<br />
-      <ul>
-        <% @model.gestures.each do |gesture| %>
-          <li>
-            <%= gesture.name %>, <%= gesture.description if gesture.description? %>
-          </li>
-        <% end %>
-      </ul>
-
+      <strong>Versión:</strong> <%= @model.version || "No especificada" %><br />
+      <strong>Archivo asociado:</strong> 
+      <% if @model.model_file.attached? %>
+        <%= link_to "Descargar", rails_blob_path(@model.model_file, disposition: "attachment"), class: "btn btn-link" %>
+      <% else %>
+        No disponible
+      <% end %>
     </p>
-    
-    <%= link_to 'Editar Modelo', edit_model_path(@model), class: 'btn btn-primary' %>
 
-    <% if @model.users.empty? %>  
-      <%= link_to 'Eliminar Modelo', model_path(@model), data: { turbo_confirm: '¿Estás seguro de que deseas eliminar este modelo?', turbo_method: "delete" }, class: 'btn btn-danger' %>
+    <hr />
+
+    <h4>
+      Gestos Asociados
+    </h4>
+    
+    <% if @model.gestures.empty? %>
+      <p class="text-muted">
+        Este modelo no tiene gestos asociados.
+      </p>
+    <% else %>
+      <div class="accordion" id="gesturesAccordion">
+        <% @model.gestures.each_with_index do |gesture, index| %>
+          <div class="accordion-item">
+            
+            <h2 class="accordion-header" id="gestureHeading<%= index %>">
+              
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#gestureCollapse<%= index %>"
+                aria-expanded="false"
+                aria-controls="gestureCollapse<%= index %>"
+              >
+                <%= gesture.name %>
+              </button>
+            
+            </h2>
+
+            <div
+              id="gestureCollapse<%= index %>"
+              class="accordion-collapse collapse"
+              aria-labelledby="gestureHeading<%= index %>"
+              data-bs-parent="#gesturesAccordion"
+            >
+              <div class="accordion-body">
+                
+                <p>
+                  <strong>Descripción:</strong> <%= gesture.description || "No especificada" %>
+                </p>
+
+                <% if gesture.image.attached? %>
+                  <div class="text-center">
+                    <%= image_tag gesture.image, class: "img-fluid rounded", style: "max-height: 200px;" %>
+                  </div>
+                <% else %>
+                  <p class="text-muted">
+                    Este gesto no tiene imagen asociada.
+                  </p>
+                <% end %>
+              
+              </div>
+            </div>
+
+          </div>
+        <% end %>
+      </div>
     <% end %>
+
+    <hr />
+
+    <div class="d-flex justify-content-between">
+
+      <%= link_to 'Editar Modelo', edit_model_path(@model), class: 'btn btn-primary' %>
+      
+      <% if @model.users.empty? %>
+        <%= link_to 'Eliminar Modelo', model_path(@model), data: { turbo_confirm: '¿Estás seguro de que deseas eliminar este modelo?', turbo_method: "delete" }, class: 'btn btn-danger' %>
+      <% end %>
+    </div>
   </div>
 </div>
 
 <hr />
 
-<!--Usuarios que estan usando este modelo-->
 <div class="custom-card mx-auto">
   <div class="card-header">
     <h5 class="custom-card-title">
-      Usuarios que estan usando este modelo
+      Usuarios que están usando este modelo
     </h5>
   </div>
 
-  <% if @model.users.empty?%>
+  <% if @model.users.empty? %>
     <div class="card-body">
-      <h6 class="card-title">No hay usuarios usando este modelo</h6>
+      <h6 class="card-title text-muted">No hay usuarios usando este modelo.</h6>
     </div>
   <% else %>
     <ul class="list-group list-group-flush">
@@ -51,9 +112,8 @@
   <% end %>
 </div>
 
-<div style="text-align: center;">
-  <br />
+<div class="text-center mt-4">
   <%= link_to 'Volver', models_path, class: 'btn btn-info btn-lg' %>
-<div>
+</div>
 
 <br />
