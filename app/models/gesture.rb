@@ -6,10 +6,10 @@ class Gesture < ApplicationRecord
   #,,, no es necesario que se vea bonito
 
   before_create :increment_gesture_count
+  before_destroy :decrement_gesture_count
 
   validates :name, presence: { message: "of Gesture must be provided" }
-  #validates :description, presence: { message: "of Gesture must be at least Blank" }
-  validates :model_id, presence: { message: "of Gesture must be present" }
+  validates :description, presence: { message: "of Gesture must be at least Blank" }, on: :update
   
   validate :print_errors
 
@@ -21,6 +21,10 @@ class Gesture < ApplicationRecord
 
   def increment_gesture_count
     model.increment!(:gesture_count)
+  end
+
+  def decrement_gesture_count
+    model.decrement!(:gesture_count)
   end
 
 end

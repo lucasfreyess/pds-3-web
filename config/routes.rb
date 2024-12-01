@@ -8,7 +8,6 @@ Rails.application.routes.draw do
   
   root "home#index"
   
-  
   #get "controllers" => "controllers#index"
   #get "controllers/available" => "controllers#available", as: :available_controllers
   #get "controllers/new" => "controllers#new", as: :new_controller
@@ -35,10 +34,13 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :models, only: [:index, :show] do
-    #member do
-    #  post 'update_user_model', to: 'models#update_user_model', as: :update_user_model
-    #end
+  #resources :models, only: [:index, :show, ] do
+  resources :models do
+  
+    member do
+      #post 'update_user_model', to: 'models#update_user_model', as: :update_user_model
+      get 'json', to: 'models#json', as: :json
+    end
   end
 
   resources :lockers, only: [:edit, :update]

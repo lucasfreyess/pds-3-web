@@ -2,10 +2,16 @@ class ControllersController < ApplicationController
   
   before_action :authenticate_user!
   before_action :authorize_user, only: [:show]
+  #before_action :is_admin, only: [:new, :create]
+  #before_action :is_not_admin
 
   # GET /controllers
   def index
-    @controllers = Controller.where(user_id: current_user.id)
+    if current_user.is_admin
+      @controllers = Controller.all
+    else
+      @controllers = Controller.where(user_id: current_user.id)
+    end
   end
 
   # GET /controllers/available
@@ -16,13 +22,39 @@ class ControllersController < ApplicationController
   # GET /controllers/:id
   def show
     @controller = Controller.find(params[:id])
-    @model = @controller.user.model
+    if @controller.user
+      @model = @controller.user.model
+    else
+      @model = nil
+    end
+
     @lockers = @controller.lockers.order(:id)
     @connected = @controller.last_seen_at && (Time.current - @controller.last_seen_at) <= 10.minutes
+    
+    # si no se hace flash.now entonces el mensaje se muestra en la siguiente vista xd
     if @connected
-      flash[:notice] = "¡Conexión exitosa!"
+      flash.now[:info] = "¡Conexión exitosa!"
     else
-      flash[:alert] = "No se pudo conectar al controlador."
+      flash.now[:warning] = "No se pudo conectar al controlador."
+    end
+  end
+
+  # GET /controllers/new
+  def new
+    @controller = Controller.new
+    @controller.lockers.build
+  end
+
+  # POST /controllers
+  def create
+    @controller = Controller.new(controller_locker_params)
+
+    if @controller.save
+      flash[:success] = "Controlador creado correctamente."
+      redirect_to controllers_path#, notice: "Controlador creado correctamente."
+    else
+      flash[:danger] = "Hubo un error al crear el controlador."
+      render :new#, alert: "Hubo un error al crear el controlador."
     end
   end
 
@@ -36,9 +68,11 @@ class ControllersController < ApplicationController
       #regenerate_lockers_passwords tiene dentro suyo la publicacion de las 
       #nuevas claves, junto con model_url (aunque no haya cambiado), a mqtt
       @controller.regenerate_lockers_passwords_if_model_changed
-      redirect_to controllers_path, notice: "Controlador asignado correctamente."
+      flash[:success] = "Controlador asignado correctamente."
+      redirect_to controllers_path#, notice: "Controlador asignado correctamente."
     else
-      render :available_path, alert: "Hubo un error al asignar el controlador."
+      flash[:danger] = "Hubo un error al asignar el controlador."
+      render :available_path#, alert: "Hubo un error al asignar el controlador."
     end
   end
 
@@ -51,9 +85,11 @@ class ControllersController < ApplicationController
       # Actualiza los correos de los lockers a vacío
       @controller.lockers.update_all(owner_email: "")
 
-      redirect_to controllers_path, notice: "Controlador desasignado correctamente."
+      flash[:notice] = "Controlador desasignado correctamente."
+      redirect_to controllers_path#, notice: "Controlador desasignado correctamente."
     else
-      redirect_to controller_path(@controller), alert: "Hubo un error al desasignar el controlador."
+      flash[:danger] = "Hubo un error al desasignar el controlador."
+      redirect_to controller_path(@controller)#, alert: "Hubo un error al desasignar el controlador."
     end
   end
 
@@ -76,14 +112,19 @@ class ControllersController < ApplicationController
   def controller_locker_params
     params.require(:controller).permit(
       :name,
+      :esp_32_mac_address,
       lockers_attributes: [:id, :name]
     )
   end
 
   def authorize_user
     controller = Controller.find(params[:id])
+
+    return if current_user.is_admin
+
     unless controller.user_id == current_user.id
-      redirect_to controllers_path, alert: "No tienes permisos para ver este controlador."
+      flash[:warning] = 'No tienes permiso para ver este Controlador.'
+      redirect_to controllers_path#, alert: "No tienes permisos para ver este controlador."
     end
   end
 

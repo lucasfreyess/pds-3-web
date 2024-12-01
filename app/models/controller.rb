@@ -2,7 +2,7 @@ class Controller < ApplicationRecord
 
   belongs_to :user, optional: true
   has_many :lockers, class_name: "Locker"
-  accepts_nested_attributes_for :lockers
+  accepts_nested_attributes_for :lockers #para el form de new_controller
 
   validates :name, presence: { message: "Name can't be blank" }
   #validates :esp32_mac_address, presence: { message: "ESP32 MAC Address can't be blank" }
@@ -41,6 +41,11 @@ class Controller < ApplicationRecord
     }.to_json
 
     MQTT_CLIENT.publish(MQTT_TOPIC_PASSWORDS, payload)
+  end
+
+  # determina si el controlador esta activo
+  def is_active
+    self.last_seen_at >= 10.minutes.ago
   end
 
 end

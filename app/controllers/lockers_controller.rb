@@ -29,8 +29,10 @@ class LockersController < ApplicationController
       owner_email: params[:locker][:owner_email],
       password: new_password
       )
-        redirect_to controller_path(@locker.controller), notice: 'Locker se actualizo!!'
+        flash[:success] = 'Casillero se actualizo exitosamente.'
+        redirect_to controller_path(@locker.controller)#, notice: 'Locker se actualizo!!'
     else
+        flash[:danger] = 'Error al actualizar el Casillero.'
         render :edit
     end
   end
@@ -44,8 +46,12 @@ class LockersController < ApplicationController
   def authorize_user
     locker = Locker.find(params[:id])
     controller = locker.controller
+
+    return if current_user.is_admin
+
     unless controller.user_id == current_user.id
-      redirect_to controllers_path, alert: "No tienes permisos para ver este casillero."
+      flash[:warning] = 'No tienes permiso para editar este Casillero.'
+      redirect_to controllers_path#, alert: "No tienes permisos para ver este casillero."
     end
   end
   

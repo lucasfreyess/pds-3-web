@@ -1,36 +1,5 @@
-<br />
-<div class="custom-card mx-auto">
-  <div class="card-body">
-   
-    <h5 class="custom-card-title">
-      <%= @model.name %>
-    </h5>
-
-    <h6>
-      <% if current_user.model == @model %>
-        Estas usando este Modelo
-      <% else %>
-        No estas usando este Modelo
-      <% end %>
-    </h6>
-    
-    <p class="custom-card-text">
-      
-      El modelo tiene <%= @model.gesture_count %> gestos:<br />
-      <ul>
-        <% @model.gestures.each do |gesture| %>
-          <li>
-            <%= gesture.name %>, <%= gesture.description if gesture.description? %>
-          </li>
-        <% end %>
-      </ul>
-
-    </p>
-    <% if current_user.model != @model %>
-      <%= button_to 'Usar este modelo', update_user_model_path(@model), method: :post, class: "btn btn-primary" %>
-    <% else %>
-      <%= link_to 'Volver', models_path, class: 'btn btn-info' %>
-    <% end %>
-    
-  </div>
-</div>
+<% if current_user.is_admin? %>
+  <%= render 'admin_show' %>
+<% else %>
+  <%= render 'user_show' %>
+<% end %>

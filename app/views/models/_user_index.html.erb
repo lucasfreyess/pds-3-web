@@ -1,0 +1,36 @@
+<div>
+  <div style="text-align: center;">
+    <h1>
+      Elige un Modelo a utilizar!!
+    </h1>
+  </div>
+
+  <br />
+
+  <% @models.each do |model|%>
+    <div class="custom-card mx-auto">
+      <div class="card-body">
+        
+        <h5 class="custom-card-title">
+          <%= model.name %>
+        </h5>
+
+        <h6>
+          con <%= model.gesture_count %> gestos
+        </h6>
+        
+        <p class="custom-card-text">
+          <% if current_user.model == model %>
+            Estas usando este Modelo.
+          <% else %>
+            Cambiate a este Modelo!
+          <% end %>
+
+        </p>
+        
+        <%= link_to 'Ver', model_path(model), class: 'btn btn-info' %>
+      </div>
+    </div>
+  <% end %>
+    
+</div>

@@ -1,0 +1,158 @@
+<div>
+
+  <div style="text-align: center;">
+
+    <h1>Métricas del Sistema</h1>
+    <br />
+
+    <p> faltan dos metricas!! o una si se cuentan las aperturas correctas y fallidas como separadas</p>
+    <br />
+
+  </div>
+
+  <!-- Controladores, Casilleros y Usuarios Activos recientemente!!-->
+  <!-- Los count son 0 cuando no estan activos, asi que no es necesario checkear edge cases-->
+  <div class="custom-card mx-auto">
+    <div class="card-body">
+      <div style="text-align: center;">
+        <h5 class="custom-card-title">
+          Controladores, Casilleros y Usuarios Activos
+        </h5>
+      </div>
+
+      <div class="row">
+        <p class="text-success mb-1">
+          <strong>Controladores Activos:</strong> <%= @active_controllers_count %>
+        </p>
+      </div>
+
+      <div class="row">
+        <p class="text-success mb-1">
+          <strong>Casilleros Activos:</strong> <%= @active_lockers_count %>
+        </p>
+      </div>
+
+      <div class="row">
+        <p class="text-success mb-1">
+          <strong>Usuarios Activos:</strong> <%= @active_users_count %>
+        </p>
+      </div>
+      
+    </div>
+  </div>
+
+  <hr />
+
+  <div class="custom-card mx-auto">
+    <div style="text-align: center;">
+      <h2>
+        Aperturas de Casilleros de los Últimos 7 Días
+      </h2>
+    </div>
+
+    <!--Cantidad de Aperturas totales de Casilleros por dia, para los ultimos siete dias-->
+    <% if @locker_openings_by_day[:successful].empty? && @locker_openings_by_day[:failed].empty? %>
+      <div class="custom-card-small mx-auto">
+        <div class="card-body">
+          <div style="text-align: center;">
+            <h5 class="custom-card-title">
+              No hay aperturas de casilleros en los últimos 7 días
+            </h5>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <% all_dates = (@locker_openings_by_day[:successful].keys + @locker_openings_by_day[:failed].keys).uniq %>
+
+      <% all_dates.each do |date| %>
+        <% success_count = @locker_openings_by_day[:successful][date] || 0 %>
+        <% failed_count = @locker_openings_by_day[:failed][date] || 0 %>
+
+        <div class="custom-card-small mx-auto">
+          <div class="card-body">
+            
+            <div style="text-align: center;">
+              <h5 class="custom-card-title">
+                <%= date.strftime("%A, %d %B %Y") %>
+              </h5>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <p class="text-success mb-1">
+                  <strong>Aperturas Exitosas:</strong> <%= success_count %>
+                </p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <p class="text-danger mb-1">
+                  <strong>Aperturas Fallidas:</strong> <%= failed_count %>
+                </p>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <hr />
+
+  <!--Modelo mas usado de los ultimos siete dias-->
+  <div class="custom-card mx-auto">
+    <div class="card-body">
+      
+      <div style="text-align: center;">
+        <h5 class="custom-card-title">
+          Modelo más usado en los últimos 7 días
+        </h5>
+      </div>
+
+      <div class="row">
+        <% if @most_used_model.nil? %>
+          <p class="text-danger mb-1">
+            <strong>No hay modelos usados en los últimos 7 días</strong>
+          </p>
+        <% else %>
+          <p class="text-success mb-1">
+            <strong>Modelo:</strong> <%= @most_used_model.name %>
+          </p>
+        <% end %>
+      </div>
+      
+    </div>
+  </div>
+
+  <hr />
+
+  <!--Usuarios Unicos que han cambiado sus modelos en los ultimos siete dias -->
+  <div class="custom-card mx-auto">
+    <div class="card-body">
+      
+      <div style="text-align: center;">
+        <h5 class="custom-card-title">
+          Usuarios que han cambiado su modelo en los últimos 7 días
+        </h5>
+      </div>
+
+      <div class="row">
+        <% if @unique_users_changed_model.any? %>
+          <% @unique_users_changed_model.each do |user| %>
+            <p class="text-success mb-1">
+              <strong>Usuario:</strong> <%= user.email %>
+            </p>
+          <% end %>
+        <% else %>
+          <p class="text-danger mb-1">
+            <strong>No hay usuarios que hayan cambiado su modelo en los últimos 7 días</strong>
+          </p>
+        <% end %>
+      </div>
+      
+    </div>
+  </div>
+
+</div>
