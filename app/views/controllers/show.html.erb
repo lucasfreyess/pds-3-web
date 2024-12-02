@@ -30,6 +30,16 @@
         <% end %>
       </p>
 
+      <p>
+        <strong>Última conexión:</strong>
+        <% if @controller.last_seen_at.present? %>
+          <%= time_ago_in_words(@controller.last_seen_at) %> ago
+        <% else %>
+          Nunca conectado
+        <% end %>
+      </p>
+
+
       <!-- Contenedor con display flex para los botones -->
       <div class="d-flex justify-content-end mt-3">
 

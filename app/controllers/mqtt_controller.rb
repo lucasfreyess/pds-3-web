@@ -2,7 +2,7 @@
 class MqttController < ApplicationController
     def send_message
       # Dirección IP del broker remoto o dominio
-      broker_ip = "localhost"
+      broker_ip = "test.mosquitto.org"
 
       # Conexión al broker
       # client = MQTT::Client.new(:host => "mqtt://#{broker_ip}", :port => 1883)
@@ -23,18 +23,29 @@ class MqttController < ApplicationController
       render json: { message: 'Mensaje enviado a MQTT' }
     end
 
-    def subscribe_to_topic
+    def subscribe_to_status
 
       # Dirección IP del broker remoto o dominio
-      broker_ip = "172.28.143.35"
+      broker_ip = "test.mosquitto.org"
 
       # Conéctate al broker
-      client = MQTT::Client.new("mqtt://#{broker_ip}")
+      client = MQTT::Client.new
+      client.host = broker_ip
+      client.port = 1883
       client.connect
 
       # Suscríbete al tópico y define el comportamiento cuando se reciba un mensaje
-      client.get('esp32/topic') do |topic, message|
+      client.get('controladores/status') do |topic, message|
         Rails.logger.info "Mensaje recibido en el tópico #{topic}: #{message}"
+
+        data = JSON.parse(message)
+        last_connected_at = Time.parse(data["time"])  # Almacenar el tiempo de la última conexión
+        controller = Controller.find_by(esp32_mac_address: data["controller_id"])
+        if controller
+          controller.update(last_connected_at: last_connected_at)
+        else
+          Rails.logger.warn "Controlador no encontrado para ID: #{data["controller_id"]}"
+        end
       end
 
       # Desconéctate después de recibir el mensaje

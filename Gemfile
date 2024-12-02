@@ -12,6 +12,9 @@ gem 'omniauth'
 gem 'omniauth-google-oauth2'
 gem "omniauth-rails_csrf_protection"
 
+#mqtt periodico
+gem 'whenever', require: false
+
 gem 'dotenv-rails', groups: [:development, :test]
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.2.2"
