@@ -112,6 +112,37 @@ class MqttController < ApplicationController
       render json: { message: 'Mensaje enviado al MQTT', data: message }
     end
 
+    def self.send_keys_after_model_update(controller)
+      return { success: false, error: "Controlador no encontrado" } if controller.nil?
+  
+      broker_ip = "test.mosquitto.org"
+      port = 1883
+
+      claves = controller.lockers.map(&:password)
+      time_now = Time.now.to_s
+  
+      message = {
+        claves: claves,
+        time: time_now
+      }.to_json
+  
+      client = MQTT::Client.new(host: broker_ip, port: port)
+  
+      Rails.logger.info("LLAMADA A SEND_KEYS_AFTER_MODEL_UPDATE OLAAAAAAAAAAAAAAaa")
+
+      begin
+        client.connect
+        topic = "controlador/#{controller.esp32_mac_address}"
+        Rails.logger.info("Publicando mensaje en el tópico: #{topic} con mensaje: #{message}")
+        client.publish(topic, message)
+        client.disconnect
+        { success: true }
+      rescue => e
+        Rails.logger.error "Error al publicar mensaje MQTT: #{e.message}"
+        { success: false, error: e.message }
+      end
+    end
+
     def publish_controller_register(controller)
       message = {
         time: Time.now.to_s, # timestamp actual

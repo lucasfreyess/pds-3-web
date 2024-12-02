@@ -107,6 +107,7 @@ class ModelsController < ApplicationController
     # enviar url del modelo a los controladores del usuario
     MqttController.new.send_model_update(model)
 
+
     flash[:success] = 'Tu Modelo ha sido actualizado exitosamente.'
     redirect_to model_path(model)#, notice: 'Tu Modelo ha sido actualizado!'
   end
