@@ -1,6 +1,6 @@
 class Locker < ApplicationRecord
 
-  belongs_to :controller, class_name: "Controller"
+  belongs_to :controller, class_name: "Controller", dependent: :destroy
   has_many :locker_openings, class_name: "LockerOpening", dependent: :destroy
 
   # before_create :check_locker_limit

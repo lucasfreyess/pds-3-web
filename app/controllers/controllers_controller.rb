@@ -1,5 +1,5 @@
 class ControllersController < ApplicationController
-
+  before_action :set_controller, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
   before_action :authorize_user, only: [:show]
   #before_action :is_admin, only: [:new, :create]
@@ -21,7 +21,6 @@ class ControllersController < ApplicationController
 
   # GET /controllers/:id
   def show
-    @controller = Controller.find(params[:id])
     if @controller.user
       @model = @controller.user.model
     else
@@ -46,17 +45,6 @@ class ControllersController < ApplicationController
   end
 
   # POST /controllers
-  # def create
-  #   @controller = Controller.new(controller_locker_params)
-
-  #   if @controller.save
-  #     flash[:success] = "Controlador creado correctamente."
-  #     redirect_to controllers_path#, notice: "Controlador creado correctamente."
-  #   else
-  #     flash[:danger] = "Hubo un error al crear el controlador."
-  #     render :new#, alert: "Hubo un error al crear el controlador."
-  #   end
-  # end
   def create
     Rails.logger.debug "PARAMS: #{params.inspect}"
     Rails.logger.debug "Controller params: #{params[:controller].inspect}"
@@ -141,25 +129,32 @@ class ControllersController < ApplicationController
     end
   end
 
-  # para mandar los passwords actualizados a mqtt
-  # aunque la vd es que no sabria como llamarlo en particular..
-  #def update_passwords
-  #  @controller = Controller.find(params[:id])
+  def edit
+  end
 
-  #  if @controller.update(controller_locker_params)
-  #    @controller.publish_lockers_passwords
-  #    redirect_to controller_path(@controller), notice: 'Lockers Passwords updated'
-  #  else
-  #    Rails.logger.error(@controller.errors.full_messages)
-  #    redirect_to controller_path(@controller), alert: 'Error updating Lockers Passwords'
-  #  end
-  #end
+  def update
+    if @controller.update(controller_params)
+      redirect_to controllers_path, notice: 'Controlador actualizado exitosamente.'
+    else
+      render :edit
+    end
+  end
+
+  def destroy
+    @controller.lockers.destroy_all
+    @controller.destroy
+    redirect_to controller_path, notice: 'Controlador eliminado exitosamente.'
+  end
 
   private
+  def set_controller
+    @controller = Controller.find(params[:id])
+  end
 
   def controller_params
     # params.permit(:name, :esp_32_mac_address)
     params.permit(:name, :esp32_mac_address, :locker_count)
+    # params.require(:controller).permit(:name, :esp32_mac_address, :locker_count)
   end
 
   def authorize_user

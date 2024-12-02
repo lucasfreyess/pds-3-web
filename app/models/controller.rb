@@ -1,7 +1,7 @@
 class Controller < ApplicationRecord
 
   belongs_to :user, optional: true
-  has_many :lockers, class_name: "Locker"
+  has_many :lockers, class_name: "Locker", dependent: :destroy
   # accepts_nested_attributes_for :lockers #para el form de new_controller
 
   validates :name, presence: { message: "Name can't be blank" }
