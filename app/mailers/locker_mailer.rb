@@ -29,7 +29,7 @@ class LockerMailer < ApplicationMailer
       end
     end
 
-    #mail(to: @owner, subject: 'Actualización de tu casillero')
+    mail(to: @owner, subject: 'Actualización de tu casillero')
     puts "EMAIL DE ACTUALIZACION DE CLAVES DE CASILLERO ENVIADO..."
   end
 
