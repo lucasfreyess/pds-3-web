@@ -113,11 +113,37 @@ class MqttService
     end
 
     if status == "cerrado"
-      # LockerOpening.create!(locker: locker, opened_at: timestamp)
-      #AGREGAR ALGUNA FUNCION PARA CUANDO LOCKER SE CIERRE
+      LockerOpening.create!(locker: locker, closed_at: timestamp)
       Rails.logger.info "Cerradura de casillero #{locker_name} registrada exitosamente."
     else
       Rails.logger.info "Estado recibido no es de cierre: #{status}"
+    end
+  end
+
+  def self.process_controller_status(topic, message)
+    Rails.logger.info "Mensaje recibido en topic específico del controlador: #{topic}, mensaje: #{message}"
+
+    esp32_mac_address = topic # El topic es el esp32_mac_address
+    begin
+      # Parsear el mensaje recibido (solo contiene la hora)
+      payload = JSON.parse(message)
+      timestamp = Time.parse(payload['time'])
+
+      # Buscar el controlador por su esp32_mac_address
+      controller = Controller.find_by(esp32_mac_address: esp32_mac_address)
+
+      unless controller
+        Rails.logger.error "Controller con MAC address #{esp32_mac_address} no encontrado."
+        return
+      end
+
+      # Actualizar el campo `last_seen_at` del controlador
+      controller.update!(last_seen_at: timestamp)
+      Rails.logger.info "Controller #{controller.id} actualizado con last_seen_at: #{timestamp}"
+    rescue JSON::ParserError => e
+      Rails.logger.error "Error al parsear mensaje JSON: #{e.message}"
+    rescue StandardError => e
+      Rails.logger.error "Error procesando estado del controlador: #{e.message}"
     end
   end
 end

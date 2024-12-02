@@ -49,7 +49,7 @@
           <%= link_to 'Modelos', models_path, class: 'btn btn-primary me-2' %>
         <% end %>
         
-        <%= link_to 'Verificar conexión', controller_path(@controller), method: :get, class: 'btn btn-info me-2' %>
+        <%= link_to 'Verificar conexión', verify_connection_controller_path(@controller), class: 'btn btn-info me-2' %>
 
         <%= button_to 'Desvincular', unlink_from_user_controller_path(@controller), method: :patch, data: { confirm: '¿Estás seguro de que quieres desvincular este controlador?' }, class: 'btn btn-danger' %>
       </div>

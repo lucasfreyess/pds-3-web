@@ -24,6 +24,9 @@ Rails.application.routes.draw do
   # patch "lockers/:id" => "lockers#update", as: :update_locker
   
   resources :controllers do
+    member do
+      get :verify_connection
+    end
     collection do
       get 'available', to: 'controllers#available', as: :available
     end

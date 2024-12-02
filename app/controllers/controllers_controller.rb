@@ -27,6 +27,10 @@ class ControllersController < ApplicationController
       @model = nil
     end
 
+    topic = @controller.esp32_mac_address
+    payload = { time: Time.current.strftime('%Y-%m-%d %H:%M:%S') }.to_json
+
+
     @lockers = @controller.lockers.order(:id)
     @connected = @controller.last_seen_at && (Time.current - @controller.last_seen_at) <= 10.minutes
 
@@ -36,6 +40,19 @@ class ControllersController < ApplicationController
     else
       flash.now[:warning] = "No se pudo conectar al controlador."
     end
+  end
+
+  def verify_connection
+    @controller = Controller.find(params[:id])
+  
+    # Publicar el mensaje MQTT para verificar conexión
+    Rails.logger.debug "Llamando a MqttController#connection para el controlador #{@controller.id}"
+    MqttController.new.connection(@controller)
+    MqttController.new.subscribe_to_controller_connection(@controller)
+
+
+    flash[:info] = "Verificando conexión..."
+    redirect_to controller_path(@controller)
   end
 
   # GET /controllers/new
