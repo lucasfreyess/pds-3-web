@@ -10,7 +10,7 @@ class MqttService
             client.subscribe(topic)
 
             puts "Suscrito al topic #{topic}"
-            
+
             client.get do |topic, message|
               begin
                 process_message(topic, message)
@@ -31,6 +31,7 @@ class MqttService
       end
     end
   end
+
   # metodo para procesar mensajes de estado de controladores
   # desde el topic de status del broker MQTT!!
   def self.process_status_message(payload)
@@ -112,4 +113,3 @@ class MqttService
     end
   end
 end
-

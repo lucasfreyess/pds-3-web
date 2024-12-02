@@ -3,7 +3,7 @@ class Model < ApplicationRecord
   has_many :controllers, class_name: "Controller"
   has_many :gestures, class_name: "Gesture", dependent: :destroy
   has_many :users, class_name: "User"
-  
+
   has_one_attached :model_file # Relación con ActiveStorage
 
   accepts_nested_attributes_for :gestures, allow_destroy: true
@@ -12,7 +12,7 @@ class Model < ApplicationRecord
   validates :description, presence: { message: "Model description must be provided." }
   #validates :url, presence: { message: "Model URL must be provided." }
   #validates :version, presence: { message: "Model version must be provided." }
-  
+
   validate :minimum_gestures_count
 
   validate :print_errors

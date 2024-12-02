@@ -1,5 +1,5 @@
 class ControllersController < ApplicationController
-  
+
   before_action :authenticate_user!
   before_action :authorize_user, only: [:show]
   #before_action :is_admin, only: [:new, :create]
@@ -30,7 +30,7 @@ class ControllersController < ApplicationController
 
     @lockers = @controller.lockers.order(:id)
     @connected = @controller.last_seen_at && (Time.current - @controller.last_seen_at) <= 10.minutes
-    
+
     # si no se hace flash.now entonces el mensaje se muestra en la siguiente vista xd
     if @connected
       flash.now[:info] = "¡Conexión exitosa!"
@@ -46,15 +46,46 @@ class ControllersController < ApplicationController
   end
 
   # POST /controllers
+  # def create
+  #   @controller = Controller.new(controller_locker_params)
+
+  #   if @controller.save
+  #     flash[:success] = "Controlador creado correctamente."
+  #     redirect_to controllers_path#, notice: "Controlador creado correctamente."
+  #   else
+  #     flash[:danger] = "Hubo un error al crear el controlador."
+  #     render :new#, alert: "Hubo un error al crear el controlador."
+  #   end
+  # end
   def create
-    @controller = Controller.new(controller_locker_params)
+    Rails.logger.debug "PARAMS: #{params.inspect}"
+    Rails.logger.debug "Controller params: #{params[:controller].inspect}"
+    # Verifica si params[:controller] está como un hash o como un string
+    if params[:controller].is_a?(Hash)
+      Rails.logger.debug "controller params is a hash"
+    else
+      Rails.logger.debug "controller params is NOT a hash"
+    end
+
+
+    @controller = Controller.new(controller_params)
+    locker_count = params[:locker_count].to_i.clamp(1, 4) # Aseguramos que sea entre 1 y 4
 
     if @controller.save
-      flash[:success] = "Controlador creado correctamente."
-      redirect_to controllers_path#, notice: "Controlador creado correctamente."
+      # Crear lockers con nombres numéricos
+      (1..locker_count).each do |i|
+        @controller.lockers.create(name: i.to_s)
+      end
+
+      @controller.lockers.each do |locker|
+        locker.update(password: '0000') # Asignar la clave inicial de '0000' a cada locker
+      end
+
+      flash[:success] = "Controlador creado correctamente con #{locker_count} lockers."
+      redirect_to controllers_path
     else
       flash[:danger] = "Hubo un error al crear el controlador."
-      render :new#, alert: "Hubo un error al crear el controlador."
+      render :new
     end
   end
 
@@ -65,7 +96,7 @@ class ControllersController < ApplicationController
     puts @controller.inspect
 
     if @controller.update!(user_id: current_user.id)
-      #regenerate_lockers_passwords tiene dentro suyo la publicacion de las 
+      #regenerate_lockers_passwords tiene dentro suyo la publicacion de las
       #nuevas claves, junto con model_url (aunque no haya cambiado), a mqtt
       @controller.regenerate_lockers_passwords_if_model_changed
       flash[:success] = "Controlador asignado correctamente."
@@ -107,14 +138,11 @@ class ControllersController < ApplicationController
   #  end
   #end
 
-  private 
+  private
 
-  def controller_locker_params
-    params.require(:controller).permit(
-      :name,
-      :esp_32_mac_address,
-      lockers_attributes: [:id, :name]
-    )
+  def controller_params
+    # params.permit(:name, :esp_32_mac_address)
+    params.permit(:name, :esp32_mac_address, :locker_count)
   end
 
   def authorize_user
@@ -150,4 +178,3 @@ class ControllersController < ApplicationController
     end
   end
 end
-

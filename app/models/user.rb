@@ -1,8 +1,8 @@
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable, :recoverable, 
-  :rememberable, :validatable, :trackable, :omniauthable, 
+  devise :database_authenticatable, :registerable, :recoverable,
+  :rememberable, :validatable, :trackable, :omniauthable,
   omniauth_providers: [:google_oauth2]
 
   has_many :controllers, class_name: "Controller"
@@ -12,11 +12,11 @@ class User < ApplicationRecord
   after_update :update_lockers_password_if_model_changed
 
   # validates :name, presence: {message: "of this user must be present"}
-  validates :email, presence: {message: "of this user must be present"}, 
+  validates :email, presence: {message: "of this user must be present"},
                     uniqueness: {message: "is already used. Aborting user creation."}
   validates :password, presence: {message: "of this user must be present"}, if: :password_required?
-  #validates :is_admin, presence: {message: "of this user must be present"} 
-  
+  #validates :is_admin, presence: {message: "of this user must be present"}
+
   validate :print_errors
 
   def print_errors
@@ -25,7 +25,7 @@ class User < ApplicationRecord
 
   def self.from_google(u)
 
-    if u[:email] == "lfreyes1@miuandes.cl"
+    if u[:email].match?(/@miuandes\.cl$/)
       create_with(uid: u[:uid], provider: 'google',
                 password: Devise.friendly_token[0, 20], is_admin: true).find_or_create_by!(email: u[:email])
     else
@@ -107,7 +107,7 @@ class User < ApplicationRecord
     .where(controllers: { user_id: id })
     .joins(:locker_openings)
     .where("locker_openings.opened_at >= ?", 7.days.ago.beginning_of_day)
-    .distinct(:owner_email) 
+    .distinct(:owner_email)
     .count
   end
 
@@ -143,7 +143,7 @@ class User < ApplicationRecord
 
   def update_lockers_password_if_model_changed
     #nose si esto es legal?!?!? update: si funciona!!
-    if saved_change_to_model_id? 
+    if saved_change_to_model_id?
       controllers.each(&:regenerate_lockers_passwords_if_model_changed)
     end
   end

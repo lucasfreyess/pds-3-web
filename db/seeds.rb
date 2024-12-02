@@ -36,7 +36,7 @@ user_1 = User.create!(
 )
 
 controller_1 = Controller.create!(
-  name: 'Controller 1', 
+  name: 'Controller 1',
   esp32_mac_address: '00:00:00:00:00:01',
 )
 
@@ -62,7 +62,7 @@ controller_3 = Controller.create!(
 end
 
 3.times do |i|
-  
+
   Locker.create!(
     name: "Locker #{i+1}",
     description: "Locker #{i+1} description",
@@ -72,7 +72,7 @@ end
 end
 
 3.times do |i|
-  
+
   Locker.create!(
     name: "#{i+1}",
     owner_email: "lucas.reyes.salazar@gmail.com",
