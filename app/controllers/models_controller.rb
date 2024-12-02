@@ -19,7 +19,8 @@ class ModelsController < ApplicationController
       },
       except: [:created_at, :updated_at]
       ).merge(
-        file: model.model_file.attached? ? model.model_file&.download&.force_encoding('UTF-8') : nil# Contenido del archivo subido
+        file: model.model_file.attached? ? model.model_file&.download&.force_encoding('UTF-8') : nil,# Contenido del archivo subido
+        gestures_names: model.gestures.pluck(:name),
       )
     },
     status: :ok
@@ -102,6 +103,10 @@ class ModelsController < ApplicationController
     #esto (creo) q llama a update de user_controller, que a su vez llama a
     #update_lockers_password_if_model_changed para cada controlador del usuario
     current_user.update(model: model)
+
+    # enviar url del modelo a los controladores del usuario
+    MqttController.new.send_model_update(model)
+
 
     flash[:success] = 'Tu Modelo ha sido actualizado exitosamente.'
     redirect_to model_path(model)#, notice: 'Tu Modelo ha sido actualizado!'

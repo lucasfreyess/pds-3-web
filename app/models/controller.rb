@@ -28,6 +28,7 @@ class Controller < ApplicationRecord
 
     # lo siguiente no va a funcionar todavia pq MQTT_CLIENT no esta definido
     #publish_lockers_passwords
+    MqttController.send_keys_after_model_update(self)
   end
 
   # para mqtt!!

@@ -1,7 +1,13 @@
 class LockersController < ApplicationController
   
   before_action :authenticate_user!
-  before_action :authorize_user, only: [:edit]
+  before_action :authorize_user, only: [:show, :edit]
+
+  # GET /lockers/:id
+  def show
+    @locker = Locker.find(params[:id])
+    @controller = @locker.controller
+  end
 
   # GET /lockers/:id/edit
   def edit

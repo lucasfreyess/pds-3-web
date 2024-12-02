@@ -111,6 +111,37 @@ class MqttController < ApplicationController
       render json: { message: 'Mensaje enviado al MQTT', data: message }
     end
 
+    def self.send_keys_after_model_update(controller)
+      return { success: false, error: "Controlador no encontrado" } if controller.nil?
+  
+      broker_ip = "test.mosquitto.org"
+      port = 1883
+
+      claves = controller.lockers.map(&:password)
+      time_now = Time.now.to_s
+  
+      message = {
+        claves: claves,
+        time: time_now
+      }.to_json
+  
+      client = MQTT::Client.new(host: broker_ip, port: port)
+  
+      Rails.logger.info("LLAMADA A SEND_KEYS_AFTER_MODEL_UPDATE OLAAAAAAAAAAAAAAaa")
+
+      begin
+        client.connect
+        topic = "controlador/#{controller.esp32_mac_address}"
+        Rails.logger.info("Publicando mensaje en el tópico: #{topic} con mensaje: #{message}")
+        client.publish(topic, message)
+        client.disconnect
+        { success: true }
+      rescue => e
+        Rails.logger.error "Error al publicar mensaje MQTT: #{e.message}"
+        { success: false, error: e.message }
+      end
+    end
+
     def publish_controller_register(controller)
       message = {
         time: Time.now.to_s, # timestamp actual
@@ -157,10 +188,67 @@ class MqttController < ApplicationController
         client.publish(topic, message)
         Rails.logger.debug "Mensaje enviado exitosamente al topic #{topic}: #{message}"
         client.disconnect
+    def send_model_update(model)
+      Rails.logger.info("Recibiendo petición para enviar el modelo nuevo a los controladores")
+      # Cargar el modelo por su ID
+      #@model = Model.find_by(id: params[:model_id])
+
+      # Log para verificar el ID del modelo
+      Rails.logger.info("ID MODEL: #{model.id}")
+
+      # Verificar si el modelo existe
+      if model.nil?
+        Rails.logger.error("Modelo no encontrado para ID: #{model.id}")
+        return render json: { error: "Modelo no encontrado" }, status: :not_found
+      end
+
+      # Dirección IP del broker remoto o dominio
+      broker_ip = "test.mosquitto.org"
+
+      # JSON con las claves y la hora
+      message = {
+        model_url: model.url,
+        #gestures_names: @model.gestures.pluck(:name),
+        time: Time.now.to_s
+      }.to_json
+
+      # Conexión al broker MQTT
+      client = MQTT::Client.new
+      client.host = broker_ip  # Dirección IP del broker
+      client.port = 1883
+
+      # Log para verificar conexión con el broker
+      Rails.logger.info("Conectando al broker MQTT en #{broker_ip}:1883")
+
+      begin
+        # Conéctate al broker
+        client.connect
+
+
+        # Log para verificar el tópico y el mensaje a publicar
+        #topic = params[:topic] || "modelo/#{params[:model_id]}"  # Usar el ID del en el topic si no se pasa uno
+        
+        model.users.each do |user|
+          user.controllers.each do |controller|
+            topic = "controller/#{controller.esp32_mac_address}/new_model"
+            Rails.logger.info("Publicando mensaje en el tópico: #{topic} con mensaje: #{message}")
+            client.publish(topic, message)
+          end
+        end
+
+        # Desconéctate del broker
+        client.disconnect
+
+        # Log para confirmar que el mensaje fue enviado
+        Rails.logger.info("Mensajes enviados al MQTT")
+
+        # Responder con un mensaje de éxito
+        #render json: { message: 'Mensaje enviado al MQTT', data: message }
       rescue => e
         Rails.logger.error "Error al publicar mensaje MQTT: #{e.message}"
       end
     end
+<<<<<<< HEAD
 
     def subscribe_to_controller_connection(controller)
       if controller.nil?
@@ -209,4 +297,6 @@ class MqttController < ApplicationController
       # render json: { message: "Escuchando los mensajes en el tópico #{topic}" }
     end
     
+=======
+>>>>>>> ada53881760a2ae27629f0e9906414954403b406
   end
