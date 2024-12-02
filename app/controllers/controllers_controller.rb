@@ -90,6 +90,9 @@ class ControllersController < ApplicationController
           end
         end
 
+        #MQTT al crear un controlador
+        MqttController.new.publish_controller_connected_status(@controller)
+
         flash[:success] = "Controlador creado correctamente con #{lockers_to_create} lockers."
         redirect_to controllers_path
       else
