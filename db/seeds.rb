@@ -151,14 +151,16 @@ seven.image.attach(io: File.open(Rails.root.join('app/assets/images/7.png')), fi
 
 
 LockerOpening.create!(
-  locker: Locker.first,
-  opened_at: Time.now,
+  locker: Locker.last, #del controlador ESP
+  opened_at: Time.now - 30.seconds,
+  closed_at: Time.now,
   was_succesful: true
 )
 
 LockerOpening.create!(
-  locker: Locker.first,
-  opened_at: Time.now,
+  locker: Locker.last, #del controlador ESP
+  opened_at: Time.now - 60.seconds,
+  closed_at: Time.now,
   was_succesful: false
 )
 

@@ -25,7 +25,6 @@ class LockersController < ApplicationController
     #MQTT_CLIENT.publish(topic_base, new_password)
 
     if @locker.update!(
-      name: params[:locker][:name],
       owner_email: params[:locker][:owner_email],
       password: new_password
       )
@@ -40,7 +39,7 @@ class LockersController < ApplicationController
   private
 
   def locker_params
-    params.require(:locker).permit(:name, :owner_email)
+    params.require(:locker).permit(:owner_email)
   end
 
   def authorize_user

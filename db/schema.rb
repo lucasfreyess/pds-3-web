@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_13_200819) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_01_202810) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -68,6 +68,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_13_200819) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "was_succesful", default: false
+    t.datetime "closed_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.index ["locker_id"], name: "index_locker_openings_on_locker_id"
   end
 
@@ -83,6 +84,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_13_200819) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "controller_id", null: false
+    t.datetime "last_closed_at"
     t.index ["controller_id"], name: "index_lockers_on_controller_id"
   end
 

@@ -8,16 +8,19 @@
     <div style="text-align: center;">
       <h1>Métricas de tus Casilleros</h1>
       <br/>
-      <p>falta una metrica!! o ninguna si es se cuentan las aperturas correctas y fallidas como separadas</p>
+      <p>no faltan metricas!</p>
     </div>
 
     <br />
 
     <div class="custom-card mx-auto">
       <div style="text-align: center;">
-        <h3>
-          Aperturas de Casilleros de los Últimos 7 Días
+        <h3 class="custom-card-title">
+          Aperturas de Casilleros
         </h3>
+        <h4 class="custom-card-subtitle">
+          de los últimos 7 días
+        </h4>
       </div>
 
       <!-- Aperturas de casilleros!!!-->
@@ -78,8 +81,11 @@
       <div class="card-body">
         <div style="text-align: center;">
           <h5 class="custom-card-title">
-            Casillero más abierto de los últimos 7 días
+            Casillero más abierto
           </h5>
+          <h6 class="custom-card-subtitle">
+            de los últimos 7 días
+          </h6>
         </div>
         
         <div class="row">
@@ -123,8 +129,11 @@
         
         <div style="text-align: center;">
           <h5 class="custom-card-title">
-            Número de Dueños Únicos que han Abierto sus Casilleros en los Últimos 7 Días
+            Número de Dueños Únicos que han Abierto sus Casilleros
           </h5>
+          <h6 class="custom-card-subtitle">
+            en los últimos 7 días
+          </h6>
         </div>
         
         <div class="row">
@@ -134,6 +143,35 @@
                 Dueños Únicos:
               </strong> 
               <%= @unique_owners_opened %>
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!--tiempo promedio de aperturas de casilleros-->
+    <hr />
+
+    <div class="custom-card mx-auto">
+      <div class="card-body">
+        
+        <div style="text-align: center;">
+          <h5 class="custom-card-title">
+            Tiempo Promedio de Aperturas de Casilleros
+          </h5>
+          <h6 class="custom-card-subtitle">
+            en los últimos 7 días
+          </h6>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-1">
+              <strong>
+                Tiempo Promedio:
+              </strong> 
+              <%= @average_opening_time_last_7_days %> segundos
             </p>
           </div>
         </div>

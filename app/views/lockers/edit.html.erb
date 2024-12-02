@@ -1,10 +1,13 @@
+<div style="text-align: center;">
+  <h2>
+    Modifica el Casillero <%= @locker.name %>
+  </h2>
+  <br/>
+</div>
+
 <div class="container">
   <%= form_with(model: @locker, url: locker_path(@locker), local: true) do |form| %>
-    <div class="mb-3">
-      <%= form.label :name, "Nombre del Casillero", class: "form-label" %>
-      <%= form.text_field :name, class: "form-control" %>
-    </div>
-
+    
     <div class="mb-3">
       <%= form.label :owner_email, "Email del Dueño", class: "form-label" %>
       <%= form.email_field :owner_email, class: "form-control" %>

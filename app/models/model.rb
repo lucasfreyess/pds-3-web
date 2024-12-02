@@ -8,12 +8,13 @@ class Model < ApplicationRecord
 
   accepts_nested_attributes_for :gestures, allow_destroy: true
 
-  validates :name, presence: { message: "Model name can't be blank" }
+  validates :name, presence: { message: "Model name can't be blank" },
+                    uniqueness: { message: "Model name must be unique" }
   validates :description, presence: { message: "Model description must be provided." }
   #validates :url, presence: { message: "Model URL must be provided." }
   #validates :version, presence: { message: "Model version must be provided." }
-
-  validate :minimum_gestures_count
+  
+  validate :unique_gesture_names
 
   validate :print_errors
 
@@ -29,9 +30,10 @@ class Model < ApplicationRecord
 
   private
 
-  def minimum_gestures_count
-    if gestures.reject(&:marked_for_destruction?).size < 6
-      errors.add(:gestures, "deben haber al menos 6 gestos.")
+  def unique_gesture_names
+    gesture_names = gestures.reject(&:marked_for_destruction?).map(&:name)
+    unless gesture_names.uniq.size == gesture_names.size
+      errors.add(:gestures, "deben tener nombres únicos dentro del mismo modelo.")
     end
   end
 

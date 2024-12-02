@@ -45,8 +45,8 @@ class ModelsController < ApplicationController
   # GET /models/new
   def new
     @model = Model.new
-    #6.times { @model.gestures.build }
-    @model.gestures.build
+    6.times { @model.gestures.build } #por el mínimo de gestos!!
+    #@model.gestures.build
   end
 
   # POST /models

@@ -19,15 +19,6 @@ class Locker < ApplicationRecord
     puts errors.full_messages
   end
 
-  # Checks if the locker is active based on the last time it was opened.
-  # A locker is considered active if it was opened within the last 10 minutes.
-  #
-  # @return [Boolean] true if the locker was opened within the last 10 minutes, false otherwise.
-  # @example
-  #   locker.last_opened_at = Time.now - 5.minutes
-  #   locker.is_active # => true
-  #   locker.last_opened_at = Time.now - 15.minutes
-  #   locker.is_active # => false
   def is_active
 
     if self.last_opened_at.nil?

@@ -4,6 +4,7 @@ class LockerOpening < ApplicationRecord
 
   before_create :increment_locker_open_count
   after_create :set_locker_last_opened_at
+  after_create :set_locker_last_closed_at
   after_create :send_locker_opening_email
   
   validates :locker_id, presence: { message: "of locker opening must be present" }
@@ -27,5 +28,10 @@ class LockerOpening < ApplicationRecord
   def set_locker_last_opened_at
     puts "#############Setting last_opened_at to #{self.opened_at}"
     locker.update!(last_opened_at: self.opened_at)
+  end
+
+  def set_locker_last_closed_at
+    puts "#############Setting last_closed_at to #{self.closed_at}"
+    locker.update!(last_closed_at: self.closed_at)
   end
 end

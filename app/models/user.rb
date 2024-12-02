@@ -111,6 +111,70 @@ class User < ApplicationRecord
     .count
   end
 
+  # Tiempo promedio de apertura de casilleros en los últimos 7 días
+  # metodo para usuario normal
+  def average_opening_time_last_7_days
+    locker_openings = LockerOpening.joins(locker: :controller)
+                                   .where(controllers: { user_id: id })
+                                   .where('opened_at >= ?', 7.days.ago)
+                                   .where.not(closed_at: nil)
+
+    return 0 if locker_openings.empty?
+
+    puts "LOCKER OPENINGS #{locker_openings.inspect}"
+
+    total_time = locker_openings.sum { |opening| opening.closed_at - opening.opened_at }
+    (total_time / locker_openings.size).round(2) # Tiempo promedio en segundos
+  end
+
+  # Tiempo promedio de apertura por modelo en los últimos 7 días
+  def average_opening_time_by_model_last_7_days
+    return {} unless self.is_admin
+
+    models_with_averages = {}
+
+    puts "ACTIVANDOO AVERAGE OPENING TIME BY MODEL"
+
+    Model.includes(users: { controllers: { lockers: :locker_openings } }).find_each do |model|
+      locker_openings = LockerOpening.joins(locker: { controller: :user })
+                                     .where(users: { id: model.users.ids })
+                                     .where('opened_at >= ?', 7.days.ago)
+                                     .where.not(closed_at: nil)
+
+      #puts "LOCKER OPENINGS #{locker_openings.inspect}"
+
+      next if locker_openings.empty?
+
+      total_time = locker_openings.sum { |opening| opening.closed_at - opening.opened_at }
+      average_time = (total_time / locker_openings.size).round(2)
+      models_with_averages[model.name] = average_time
+    end
+
+    return models_with_averages
+  end
+
+  # para determinar los modelos con mas aperturas fallidas en los ultimos 7 dias
+  # solo se puede acceder si current_user.is_admin
+  def models_with_most_failed_openings_last_7_days
+    return {} unless self.is_admin
+  
+    models_with_failures = {}
+  
+    Model.includes(users: { controllers: { lockers: :locker_openings } }).find_each do |model|
+      failed_openings = LockerOpening.joins(locker: { controller: :user })
+                                     .where(users: { id: model.users.ids })
+                                     .where('opened_at >= ?', 7.days.ago)
+                                     .where(was_succesful: false)
+                                     .count
+  
+      models_with_failures[model.name] = failed_openings if failed_openings.positive?
+    end
+  
+    # Ordenar por cantidad de fallos descendente
+    return models_with_failures.sort_by { |_model_name, failures| -failures }.to_h
+  end
+  
+
   # para determinar la cantidad de controladores activos (solo se puede acceder si current_user.is_admin)
   def active_controllers
     if self.is_admin

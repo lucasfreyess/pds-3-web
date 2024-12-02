@@ -81,12 +81,6 @@
 
       <%= link_to 'Editar Modelo', edit_model_path(@model), class: 'btn btn-primary' %>
       
-      <div class="d-flex justify-content-between">
-        <% if current_user.model != @model %>
-          <%= button_to 'Usar este modelo', update_user_model_path(@model), method: :post, class: "btn btn-primary" %>
-        <% end %>
-      </div>
-
       <% if @model.users.empty? %>
         <%= link_to 'Eliminar Modelo', model_path(@model), data: { turbo_confirm: '¿Estás seguro de que deseas eliminar este modelo?', turbo_method: "delete" }, class: 'btn btn-danger' %>
       <% end %>

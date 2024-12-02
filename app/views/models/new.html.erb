@@ -3,6 +3,10 @@
     Introduce los datos del nuevo Modelo 
   </h1>
   <br/>
+  <p>
+    por alguna razon, hay q recargar la pagina para q el javascript funcione!!
+  </p>
+  <br />
 </div>
 
 <%= form_with model: @model, url: models_path, local: true, html: { multipart: true, class: "needs-validation" } do |f| %>
@@ -24,7 +28,7 @@
 
     <div class="form-group mb-3">
       <%= f.label :model_file, "Archivo del Modelo (Hexadecimal)", class: "form-label fw-bold" %>
-      <%= f.file_field :model_file, accept: 'text/*', class: "form-control", required: true %>
+      <%= f.file_field :model_file, accept: 'text/*, .cc, .c, .cpp', class: "form-control" %>
       <small class="form-text text-muted">El archivo no debe superar los 2MB.</small>
     </div>
 
@@ -89,6 +93,7 @@
   document.addEventListener("DOMContentLoaded", () => {
     const gesturesContainer = document.getElementById("gestures");
     const addGestureButton = document.getElementById("add-gesture");
+    const form = document.querySelector("form");
 
     if (gesturesContainer && addGestureButton) {
       let gestureIndex = gesturesContainer.children.length;
@@ -119,6 +124,32 @@
           } else {
             alert("Debe haber al menos 6 gestos.");
           }
+        }
+      });
+
+      //validacion de que haya al menos 6 gestos visibles
+      form.addEventListener("submit", (event) => {
+        const visibleGestures = gesturesContainer.querySelectorAll(".gesture-fields:not([style*='display: none'])").length;
+        
+        if (visibleGestures < 6) {
+          event.preventDefault();
+          alert("Debe haber al menos 6 gestos visibles para guardar el modelo.");
+        }
+      });
+
+      //validacion de que los nombres de los gestos sean unicos
+      form.addEventListener("submit", (event) => {
+        const gestureNames = Array.from(
+          gesturesContainer.querySelectorAll('input[name*="[name]"]')
+        ).map(input => input.value.trim());
+        
+        const duplicateNames = gestureNames.filter((name, index, self) => 
+          name && self.indexOf(name) !== index
+        );
+
+        if (duplicateNames.length > 0) {
+          event.preventDefault();
+          alert("Los nombres de los gestos deben ser únicos. Por favor, revisa los nombres duplicados.");
         }
       });
     }

@@ -5,7 +5,7 @@
     <h1>Métricas del Sistema</h1>
     <br />
 
-    <p> faltan dos metricas!! o una si se cuentan las aperturas correctas y fallidas como separadas</p>
+    <p> no faltan metricas!</p>
     <br />
 
   </div>
@@ -45,9 +45,12 @@
 
   <div class="custom-card mx-auto">
     <div style="text-align: center;">
-      <h2>
-        Aperturas de Casilleros de los Últimos 7 Días
-      </h2>
+      <h3 class="custom-card-title">
+        Aperturas de Casilleros
+      </h3>
+      <h4 class="custom-card-subtitle">
+          de los últimos 7 días
+        </h4>
     </div>
 
     <!--Cantidad de Aperturas totales de Casilleros por dia, para los ultimos siete dias-->
@@ -107,8 +110,11 @@
       
       <div style="text-align: center;">
         <h5 class="custom-card-title">
-          Modelo más usado en los últimos 7 días
+          Modelo más usado
         </h5>
+        <h6 class="custom-card-subtitle">
+          de los últimos 7 días
+        </h6>
       </div>
 
       <div class="row">
@@ -118,7 +124,7 @@
           </p>
         <% else %>
           <p class="text-success mb-1">
-            <strong>Modelo:</strong> <%= @most_used_model.name %>
+            <strong>Modelo:</strong> <%= link_to @most_used_model.name, model_path(@most_used_model) %>
           </p>
         <% end %>
       </div>
@@ -134,8 +140,11 @@
       
       <div style="text-align: center;">
         <h5 class="custom-card-title">
-          Usuarios que han cambiado su modelo en los últimos 7 días
+          Usuarios que han cambiado su modelo
         </h5>
+        <h6 class="custom-card-subtitle">
+          en los últimos 7 días
+        </h6>
       </div>
 
       <div class="row">
@@ -154,5 +163,81 @@
       
     </div>
   </div>
+
+  <hr />
+
+  <!--Tiempo promedio de apertura por modelo (últimos 7 días)-->
+  <div class="custom-card mx-auto">
+    <div class="card-body">
+      
+      <div style="text-align: center;">
+        <h5 class="custom-card-title">
+          Tiempo Promedio de Apertura por Modelo
+        </h5>
+        <h6 class="custom-card-subtitle">
+          en los últimos 7 días
+        </h6>
+      </div>
+
+      <div class="row">
+        <% if @average_opening_time_by_model_last_7_days.nil? || @average_opening_time_by_model_last_7_days.empty? %>
+          <p class="text-danger mb-1">
+            <strong>No hay datos disponibles para calcular esta métrica</strong>
+          </p>
+        <% else %>
+          <ul class="list-group">
+            <% @average_opening_time_by_model_last_7_days.each do |model_name, average_time| %>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                    <%= link_to model_name, model_path(Model.find_by(name: model_name)) %>:
+                </span>
+                <span><%= average_time %> segundos</span>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+      </div>
+      
+    </div>
+  </div>
+
+  <hr />
+
+  <!--Modelos con Mayor Cantidad de Aperturas Fallidas (Últimos 7 Días)-->
+  <div class="custom-card mx-auto">
+    <div class="card-body">
+      
+      <div style="text-align: center;">
+        <h5 class="custom-card-title">
+          Modelos con Mayor Cantidad de Aperturas Fallidas
+        </h5>
+        <h6 class="custom-card-subtitle">
+          en los últimos 7 días
+        </h6>
+      </div>
+
+      <div class="row">
+        <% if @models_with_most_failed_openings_last_7_days.nil? || @models_with_most_failed_openings_last_7_days.empty? %>
+          <p class="text-success mb-1">
+            <strong>No hay aperturas fallidas registradas en los últimos 7 días.</strong>
+          </p>
+        <% else %>
+          <ul class="list-group">
+            <% @models_with_most_failed_openings_last_7_days.each do |model_name, failures| %>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                  <%= link_to model_name, model_path(Model.find_by(name: model_name)) %>:
+                </span>
+                <span><%= failures %> fallos</span>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+      </div>
+      
+    </div>
+  </div>
+
+
 
 </div>
