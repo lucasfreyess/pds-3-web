@@ -60,6 +60,7 @@ class ControllersController < ApplicationController
   def create
     Rails.logger.debug "PARAMS: #{params.inspect}"
     Rails.logger.debug "Controller params: #{params[:controller].inspect}"
+
     # Verifica si params[:controller] está como un hash o como un string
     if params[:controller].is_a?(Hash)
       Rails.logger.debug "controller params is a hash"
@@ -67,27 +68,40 @@ class ControllersController < ApplicationController
       Rails.logger.debug "controller params is NOT a hash"
     end
 
-
     @controller = Controller.new(controller_params)
     locker_count = params[:locker_count].to_i.clamp(1, 4) # Aseguramos que sea entre 1 y 4
 
     if @controller.save
-      # Crear lockers con nombres numéricos
-      (1..locker_count).each do |i|
-        @controller.lockers.create(name: i.to_s)
-      end
+      current_lockers_count = @controller.lockers.count
+      remaining_lockers = 4 - current_lockers_count
 
-      @controller.lockers.each do |locker|
-        locker.update(password: '0000') # Asignar la clave inicial de '0000' a cada locker
-      end
+      if remaining_lockers > 0
+        lockers_to_create = [locker_count, remaining_lockers].min  # Crea solo el número de lockers que falta
 
-      flash[:success] = "Controlador creado correctamente con #{locker_count} lockers."
-      redirect_to controllers_path
+        Rails.logger.debug "Creating #{lockers_to_create} lockers..."
+
+        # Crear lockers con nombres numéricos
+        (1..lockers_to_create).each do |i|
+          locker = @controller.lockers.create(name: "Locker #{current_lockers_count + i}")
+          if locker.persisted?
+            Rails.logger.debug "Locker created: #{locker.name}"
+          else
+            Rails.logger.error "Error creating locker: #{locker.errors.full_messages.join(', ')}"
+          end
+        end
+
+        flash[:success] = "Controlador creado correctamente con #{lockers_to_create} lockers."
+        redirect_to controllers_path
+      else
+        flash[:warning] = "Este controlador ya tiene el máximo de 4 casilleros."
+        redirect_to controllers_path
+      end
     else
       flash[:danger] = "Hubo un error al crear el controlador."
       render :new
     end
   end
+
 
   # PATCH /controllers/:id/assign_to_user
   def assign_to_user

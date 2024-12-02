@@ -111,5 +111,13 @@ class MqttService
     else
       Rails.logger.info "Estado recibido no es de apertura: #{status}"
     end
+
+    if status == "cerrado"
+      # LockerOpening.create!(locker: locker, opened_at: timestamp)
+      #AGREGAR ALGUNA FUNCION PARA CUANDO LOCKER SE CIERRE
+      Rails.logger.info "Cerradura de casillero #{locker_name} registrada exitosamente."
+    else
+      Rails.logger.info "Estado recibido no es de cierre: #{status}"
+    end
   end
 end

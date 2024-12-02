@@ -1,17 +1,18 @@
 class Locker < ApplicationRecord
 
-  belongs_to :controller, class_name: "Controller"  
+  belongs_to :controller, class_name: "Controller"
   has_many :locker_openings, class_name: "LockerOpening", dependent: :destroy
-  
-  before_create :check_locker_limit, :increment_locker_count
+
+  # before_create :check_locker_limit
+  before_create :increment_locker_count
   after_update :send_locker_update_email, if: :owner_or_password_changed?
-  
+
   # el locker viene asociado a un controlador por defecto, por lo que
   # una contraseña deberia ser creada cuando se asocia un usuario al
   # controlador, y un modelo al usuario xdd
-  
+
   validates :controller_id, presence: {message: "of locker must be present"}
-  
+
   validate :print_errors
 
   def print_errors
@@ -28,7 +29,7 @@ class Locker < ApplicationRecord
   #   locker.last_opened_at = Time.now - 15.minutes
   #   locker.is_active # => false
   def is_active
-    
+
     if self.last_opened_at.nil?
       return false
     end
