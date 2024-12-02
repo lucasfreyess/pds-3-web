@@ -1,0 +1,27 @@
+<div>
+  <div style="text-align: center;">
+    
+    <% if @users.nil? %>
+      <h1>No existen usuarios.</h1>
+    <% else %>
+      <h1>Revisa todos los Usuarios!</h1>
+    <% end %>
+    <br />
+  </div>
+
+  <br />
+
+  <% @users.each do |user|%>
+    <div class="custom-card mx-auto">
+      <div class="card-body">
+        
+        <h5 class="custom-card-title">
+          <%= user.email %>
+        </h5>
+        
+        <%= link_to 'Ver', user_path(user), class: 'btn btn-info' %>
+        <%= link_to 'Eliminar', user_path(user), method: :delete, data: { turbo_method: :delete, turbo_confirm: 'Estas seguro de que quieres eliminar este usuario?' }, class: 'btn btn-danger' %>
+      </div>
+    </div>
+  <% end %>
+</div>

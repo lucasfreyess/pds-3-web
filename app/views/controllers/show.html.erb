@@ -15,7 +15,7 @@
 
       <h6 class="custom-card-subtitle">
         <% if @model.present? %>
-          usando <%= @model.name %>
+          usando <%= link_to @model.name, model_path(@model) %>
         <% else %>
           No tiene un modelo asignado
         <% end %>
@@ -28,6 +28,17 @@
         <% else %>
           <span class="text-danger">Desconectado</span>
         <% end %>
+
+        <% if current_user.is_admin %>
+          <p class="custom-card-text">
+            <% if @user.nil? %>
+              <strong> No esta asignado a ningún usuario </strong>
+            <% else %>
+              <strong> Asignado a: </strong> <%= link_to @user.email, user_path(@user) %> 
+            <% end %>
+          </p>
+        <% end %>
+
       </p>
 
       <p>
@@ -72,7 +83,7 @@
             : "Sin dueño" 
           %>
 
-          <%= link_to 'Editar', edit_locker_path(locker), class: 'btn btn-primary btn-sm' %>
+          <%= link_to 'Ver', locker_path(locker), class: 'btn btn-info btn-sm' %>
         </li>
       <% end %>
     </ul>

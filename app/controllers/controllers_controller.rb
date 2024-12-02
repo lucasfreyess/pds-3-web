@@ -21,7 +21,8 @@ class ControllersController < ApplicationController
 
   # GET /controllers/:id
   def show
-    if @controller.user
+    @user = @controller.user
+    if @user
       @model = @controller.user.model
     else
       @model = nil

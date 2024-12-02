@@ -43,8 +43,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :lockers, only: [:edit, :update]
+  #resources :lockers, only: [:edit, :update]
+  resources :lockers
   post 'mqtt/send_keys/:controller_id', to: 'mqtt#send_keys', as: 'send_keys_mqtt'
+
+  resources :users
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

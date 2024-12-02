@@ -1,0 +1,32 @@
+<div>
+  <div class="custom-card mx-auto">
+    <div class="card-body">
+      
+      <h3 class="custom-card-title">
+        Casillero "<%= @locker.name %>"
+      </h3>
+
+      <h4 class="custom-card-subtitle">
+        perteneciente al controlador "<%= @controller.name %>"
+      </h4>
+
+      <hr />
+
+      <p class="custom-card-text">
+        <strong>Dueño:</strong> <%= @locker.owner_email || "No especificado" %><br />
+        <hr />
+        
+        <strong>Abierto por última vez:</strong> <%= @locker.last_opened_at || "No especificado" %><br />
+        <strong>Cerrado por última vez:</strong> <%= @locker.last_closed_at || "No especificado" %><br />
+        <hr />
+      </p>
+
+      <%= link_to 'Editar', edit_locker_path(@locker), class: 'btn btn-primary' %>
+
+    <div>
+  </div>
+
+  <div style="text-align: center;">
+    <%= link_to 'Volver al Controlador', controller_path(@controller), class: 'btn btn-info btn-lg'%>
+  </div>
+</div>

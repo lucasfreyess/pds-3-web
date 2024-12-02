@@ -55,6 +55,14 @@
       </a>
     </div>
 
+    <% if user_signed_in? && current_user.is_admin %>
+      <div class="navbar-nav">
+        <a class="nav-link text-white nav-link-large" href="/users">
+          Usuarios
+        </a>
+      </div>
+    <% end %>
+
     <div class="dropdown ms-auto">
     
       <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
