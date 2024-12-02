@@ -70,7 +70,7 @@ class ControllersController < ApplicationController
 
         # Crear lockers con nombres numéricos
         (1..lockers_to_create).each do |i|
-          locker = @controller.lockers.create(name: "Locker #{current_lockers_count + i}")
+          locker = @controller.lockers.create(name: "#{current_lockers_count + i}")
           if locker.persisted?
             Rails.logger.debug "Locker created: #{locker.name}"
           else
@@ -79,7 +79,7 @@ class ControllersController < ApplicationController
         end
 
         #MQTT al crear un controlador
-        MqttController.new.publish_controller_connected_status(@controller)
+        MqttController.new.publish_controller_register(@controller)
 
         flash[:success] = "Controlador creado correctamente con #{lockers_to_create} lockers."
         redirect_to controllers_path

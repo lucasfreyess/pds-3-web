@@ -7,7 +7,7 @@ class ModelsController < ApplicationController
   def json
     model = Model.find(params[:id])
     #render json: model.to_json(include: :gestures, except: [:created_at, :updated_at])
-    
+
     render json: {
       model: model.as_json(include: {
         gestures: {
@@ -21,9 +21,9 @@ class ModelsController < ApplicationController
       ).merge(
         file: model.model_file.attached? ? model.model_file&.download&.force_encoding('UTF-8') : nil# Contenido del archivo subido
       )
-    }, 
+    },
     status: :ok
-  
+
   end
 
   # GET /models
@@ -32,9 +32,10 @@ class ModelsController < ApplicationController
       @models = Model.all
     else
       # magia de sql para obtener primero el modelo del usuario!!
-      @models = Model.all.order(Arel.sql("id = #{current_user.model_id} DESC"))
+      @models = Model.all
+      @models = @models.sort_by { |model| model.id == current_user.model_id ? 0 : 1 }.reverse
     end
-  end 
+  end
 
   # GET /models/:id
   def show
@@ -52,7 +53,7 @@ class ModelsController < ApplicationController
   def create
     @model = Model.new(model_params)
     puts "Received params: #{params.inspect}" # Esto te muestra todos los parámetros recibidos en la consola.
-  
+
     if @model.save
       @model.set_url(request.host_with_port)
       flash[:success] = 'Modelo creado exitosamente.'
@@ -68,7 +69,7 @@ class ModelsController < ApplicationController
   def edit
     @model = Model.find(params[:id])
   end
-  
+
   # PATCH /models/:id
   def update
     @model = Model.find(params[:id])
@@ -85,7 +86,7 @@ class ModelsController < ApplicationController
   # DELETE /models/:id
   def destroy
     model = Model.find(params[:id])
-    
+
     if model.destroy!
       flash[:success] = 'Modelo eliminado exitosamente.'
       redirect_to models_path#, notice: 'Modelo eliminado exitosamente.'
@@ -94,11 +95,11 @@ class ModelsController < ApplicationController
       redirect_to model_path(model)#, alert: 'Error al eliminar el Modelo.'
     end
   end
-  
+
   # POST /models/:id/update_user_model
   def update_user_model
     model = Model.find(params[:model_id])
-    #esto (creo) q llama a update de user_controller, que a su vez llama a 
+    #esto (creo) q llama a update de user_controller, que a su vez llama a
     #update_lockers_password_if_model_changed para cada controlador del usuario
     current_user.update(model: model)
 
@@ -110,8 +111,8 @@ class ModelsController < ApplicationController
 
   def model_params
     params.require(:model).permit(
-      :name, 
-      :description, 
+      :name,
+      :description,
       #:url,
       :version,
       :model_file,

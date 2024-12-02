@@ -101,7 +101,7 @@ class MqttController < ApplicationController
       render json: { message: 'Mensaje enviado al MQTT', data: message }
     end
 
-    def publish_controller_connected_status(controller)
+    def publish_controller_register(controller)
       message = {
         time: Time.now.to_s, # timestamp actual
         lockers: controller.lockers.count, #cantidad de lockers
