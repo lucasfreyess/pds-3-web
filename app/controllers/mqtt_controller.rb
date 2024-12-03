@@ -188,6 +188,9 @@ class MqttController < ApplicationController
         client.publish(topic, message)
         Rails.logger.debug "Mensaje enviado exitosamente al topic #{topic}: #{message}"
         client.disconnect
+      end
+    end
+    
     def send_model_update(model)
       Rails.logger.info("Recibiendo petición para enviar el modelo nuevo a los controladores")
       # Cargar el modelo por su ID
@@ -269,28 +272,24 @@ class MqttController < ApplicationController
     
       # Suscribirse al tópico dinámico
       client.subscribe(topic)
-    
-      # Usar un hilo para escuchar mensajes de forma continua
-      Thread.new do
-        begin
-          client.get do |topic, message|
-            Rails.logger.info "Mensaje recibido en el tópico #{topic}: #{message}"
-    
-            # Procesar el mensaje (puedes cambiar la lógica aquí según tu necesidad)
-            data = JSON.parse(message)
-            last_connected_at = Time.parse(data["time"])  # Almacenar el tiempo de la última conexión
-            controller = Controller.find_by(esp32_mac_address: data["controller_id"])
-            if controller
-              controller.update(last_seen_at: last_connected_at)
-            else
-              Rails.logger.warn "Controlador no encontrado para ID: #{data["controller_id"]}"
-            end
+      begin
+        client.get do |topic, message|
+          Rails.logger.info "Mensaje recibido en el tópico #{topic}: #{message}"
+  
+          # Procesar el mensaje (puedes cambiar la lógica aquí según tu necesidad)
+          data = JSON.parse(message)
+          last_connected_at = Time.parse(data["time"])  # Almacenar el tiempo de la última conexión
+          controller = Controller.find_by(esp32_mac_address: data["controller_id"])
+          if controller
+            controller.update(last_seen_at: last_connected_at)
+          else
+            Rails.logger.warn "Controlador no encontrado para ID: #{data["controller_id"]}"
           end
-        rescue StandardError => e
-          Rails.logger.error "Error durante la suscripción: #{e.message}"
-        ensure
-          client.disconnect
         end
+      rescue StandardError => e
+        Rails.logger.error "Error durante la suscripción: #{e.message}"
+      ensure
+        client.disconnect
       end
     
       # render json: { message: "Escuchando los mensajes en el tópico #{topic}" }
