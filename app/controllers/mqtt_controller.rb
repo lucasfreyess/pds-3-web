@@ -166,31 +166,6 @@ class MqttController < ApplicationController
       end
     end
 
-    def connection(controller)
-      message = {
-        time: Time.now.to_s, # timestamp actual
-        sender: "WEB"
-        # lockers: controller.lockers.count, #cantidad de lockers
-      }.to_json
-
-      broker_ip = "test.mosquitto.org"  # Dirección del broker MQTT
-      topic = "#{controller.esp32_mac_address}"
-
-      client = MQTT::Client.new
-      client.host = broker_ip  # Dirección del broker
-      client.port = 1883       # Puerto MQTT
-
-      Rails.logger.debug "Preparando para enviar mensaje al controlador #{controller.id} en el topic #{topic}: #{message}"
-      # Conecta al broker MQTT y publica el mensaje
-      begin
-        client.connect
-        Rails.logger.debug "Conexión exitosa al broker MQTT en #{broker_ip}."
-        client.publish(topic, message)
-        Rails.logger.debug "Mensaje enviado exitosamente al topic #{topic}: #{message}"
-        client.disconnect
-      end
-    end
-    
     def send_model_update(model)
       Rails.logger.info("Recibiendo petición para enviar el modelo nuevo a los controladores")
       # Cargar el modelo por su ID
@@ -252,18 +227,35 @@ class MqttController < ApplicationController
       end
     end
 
-    def subscribe_to_controller_connection(controller)
-      if controller.nil?
-        render json: { error: "Controlador no encontrado para el ID #{controller_id}" }, status: :not_found
-        return
+    def connection(controller)
+      message = {
+        time: Time.now.to_s, # timestamp actual
+        sender: "WEB"
+        # lockers: controller.lockers.count, #cantidad de lockers
+      }.to_json
+
+      broker_ip = "test.mosquitto.org"  # Dirección del broker MQTT
+      topic = "#{controller.esp32_mac_address}"
+
+      client = MQTT::Client.new
+      client.host = broker_ip  # Dirección del broker
+      client.port = 1883       # Puerto MQTT
+
+      Rails.logger.debug "Preparando para enviar mensaje al controlador en el topic #{topic}: #{message}"
+      # Conecta al broker MQTT y PUBLICA el mensaje
+      begin
+        client.connect
+        Rails.logger.debug "Conexión exitosa al broker MQTT en #{broker_ip}."
+        client.publish(topic, message)
+        Rails.logger.debug "Mensaje enviado exitosamente al topic #{topic}: #{message}"
+        client.disconnect
       end
-    
-      # Dirección IP del broker remoto o dominio
-      broker_ip = "test.mosquitto.org"
-    
+    end
+
+    def subscribe_to_controller_connection(controller)
       # Conéctate al broker
       client = MQTT::Client.new
-      client.host = broker_ip
+      client.host = "test.mosquitto.org"
       client.port = 1883
       client.connect
     
@@ -275,15 +267,28 @@ class MqttController < ApplicationController
       begin
         client.get do |topic, message|
           Rails.logger.info "Mensaje recibido en el tópico #{topic}: #{message}"
-  
-          # Procesar el mensaje (puedes cambiar la lógica aquí según tu necesidad)
-          data = JSON.parse(message)
-          last_connected_at = Time.parse(data["time"])  # Almacenar el tiempo de la última conexión
-          controller = Controller.find_by(esp32_mac_address: data["controller_id"])
-          if controller
-            controller.update(last_seen_at: last_connected_at)
-          else
-            Rails.logger.warn "Controlador no encontrado para ID: #{data["controller_id"]}"
+    
+          begin
+            data = JSON.parse(message) # Parsear el mensaje JSON
+    
+            # Validar que el sender sea "ESP"
+            if data["sender"] == "ESP"
+              last_connected_at = Time.parse(data["time"])  # Almacenar el tiempo de la última conexión
+              Rails.logger.info "LAST CONNECTED AT #{last_connected_at}"
+              # controller = Controller.find_by(controller.id)
+              if controller
+                controller.update(last_seen_at: last_connected_at)
+                Rails.logger.info "Actualización exitosa para el controlador #{controller.name}"
+              else
+                Rails.logger.warn "Controlador no encontrado para ID: #{data["controller_id"]}"
+              end
+            else
+              Rails.logger.warn "Mensaje ignorado. El sender no es ESP: #{data["sender"]}"
+            end
+          rescue JSON::ParserError => e
+            Rails.logger.error "Error al parsear el mensaje JSON: #{e.message}"
+          rescue => e
+            Rails.logger.error "Error procesando el mensaje: #{e.message}"
           end
         end
       rescue StandardError => e
@@ -294,5 +299,4 @@ class MqttController < ApplicationController
     
       # render json: { message: "Escuchando los mensajes en el tópico #{topic}" }
     end
-    
-  end
+end    
