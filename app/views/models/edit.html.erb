@@ -28,8 +28,8 @@
     </div>
 
     <div class="form-group mb-3">
-      <%= f.label :model_file, "Actualizar Archivo del Modelo (Hexadecimal)", class: "form-label fw-bold" %>
-      <%= f.file_field :model_file, accept: 'text/*, .cc, .c, .cpp', class: "form-control" %>
+      <%= f.label :model_file, ".bin del ESP32CAM", class: "form-label fw-bold" %>
+      <%= f.file_field :model_file, accept: '.bin', class: "form-control" %>
       <% if @model.model_file.attached? %>
         <small class="form-text text-muted">
           Archivo actual: <%= link_to @model.model_file.filename.to_s, rails_blob_path(@model.model_file, disposition: "attachment"), target: "_blank" %>

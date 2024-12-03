@@ -42,7 +42,8 @@ Rails.application.routes.draw do
   
     member do
       #post 'update_user_model', to: 'models#update_user_model', as: :update_user_model
-      get 'json', to: 'models#json', as: :json
+      #get 'json', to: 'models#json', as: :json
+      get 'download_url', to: 'models#download_url', as: :download_url
     end
   end
 

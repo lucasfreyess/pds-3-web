@@ -22,9 +22,10 @@ class Model < ApplicationRecord
     puts errors.full_messages
   end
 
-  def set_url(host)
+  def set_url(new_url)
     # no lo he probado en el deploy pero ojala funcione..
-    self.update!(url: "#{Rails.application.routes.url_helpers.model_url(self, host: host)}/json")
+    #self.update!(url: Rails.application.routes.url_helpers.rails_blob_url(self.model_file, host: host))
+    self.update!(url: new_url)
     save
   end
 

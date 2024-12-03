@@ -27,8 +27,8 @@
     </div>
 
     <div class="form-group mb-3">
-      <%= f.label :model_file, "Archivo del Modelo (Hexadecimal)", class: "form-label fw-bold" %>
-      <%= f.file_field :model_file, accept: 'text/*, .cc, .c, .cpp', class: "form-control" %>
+      <%= f.label :model_file, ".bin de ESP32CAM", class: "form-label fw-bold" %>
+      <%= f.file_field :model_file, accept: '.bin', class: "form-control" %>
       <small class="form-text text-muted">El archivo no debe superar los 2MB.</small>
     </div>
 

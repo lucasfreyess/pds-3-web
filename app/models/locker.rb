@@ -4,7 +4,7 @@ class Locker < ApplicationRecord
   has_many :locker_openings, class_name: "LockerOpening", dependent: :destroy
 
   # before_create :check_locker_limit
-  before_create :increment_locker_count
+  after_create :set_locker_count
   after_update :send_locker_update_email, if: :owner_or_password_changed?
 
   # el locker viene asociado a un controlador por defecto, por lo que
@@ -38,8 +38,13 @@ class Locker < ApplicationRecord
   end
 
   # Incrementa el locker_count en el controller correspondiente
-  def increment_locker_count
-    controller.increment!(:locker_count)
+  # esto es incompatible con la creacion de lockers en el front
+  #def increment_locker_count
+  #  controller.increment!(:locker_count)
+  #end
+
+  def set_locker_count
+    controller.update!(locker_count: controller.lockers.count)
   end
 
   def check_password_length

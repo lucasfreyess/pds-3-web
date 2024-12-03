@@ -4,6 +4,7 @@ class ModelsController < ApplicationController
   before_action :check_admin, only: [:new, :create, :edit, :update, :destroy]
 
   # GET /models/:id/json
+  # deprecado xd
   def json
     model = Model.find(params[:id])
     #render json: model.to_json(include: :gestures, except: [:created_at, :updated_at])
@@ -19,13 +20,25 @@ class ModelsController < ApplicationController
       },
       except: [:created_at, :updated_at]
       ).merge(
-        file: model.model_file.attached? ? model.model_file&.download&.force_encoding('UTF-8') : nil,# Contenido del archivo subido
+        file: model.model_file.attached? ? model.model_file&.download : nil,# Contenido del archivo subido
         gestures_names: model.gestures.pluck(:name),
       )
     },
     status: :ok
-
   end
+
+  # GET /models/:id/download_url
+  def download_url
+    model = Model.find(params[:id])
+
+    if model.model_file.attached?
+      #url = Rails.application.routes.url_helpers.rails_blob_url(model.model_file, host: request.host_with_port)
+      render json: { url: model.url }
+    else
+      render json: { error: "El modelo no tiene archivo adjunto" }, status: :not_found
+    end
+  end
+
 
   # GET /models
   def index
@@ -56,7 +69,8 @@ class ModelsController < ApplicationController
     puts "Received params: #{params.inspect}" # Esto te muestra todos los parámetros recibidos en la consola.
 
     if @model.save
-      @model.set_url(request.host_with_port)
+      new_url = Rails.application.routes.url_helpers.rails_blob_url(@model.model_file, host: request.host_with_port)
+      @model.set_url(new_url)
       flash[:success] = 'Modelo creado exitosamente.'
       redirect_to models_path#, notice: 'Modelo creado exitosamente.'
     else
