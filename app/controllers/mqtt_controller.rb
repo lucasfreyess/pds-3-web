@@ -248,7 +248,6 @@ class MqttController < ApplicationController
         Rails.logger.error "Error al publicar mensaje MQTT: #{e.message}"
       end
     end
-<<<<<<< HEAD
 
     def subscribe_to_controller_connection(controller)
       if controller.nil?
@@ -297,6 +296,4 @@ class MqttController < ApplicationController
       # render json: { message: "Escuchando los mensajes en el tópico #{topic}" }
     end
     
-=======
->>>>>>> ada53881760a2ae27629f0e9906414954403b406
   end
