@@ -21,29 +21,13 @@ modelo_1 = Model.create!(
 )
 
 modelo_2 = Model.create!(
-  name: 'Model 2',
+  name: 'Modelo de prueba',
   description: 'Model 2 description'
-)
-modelo_3 = Model.create!(
-  name: 'Model 3',
-  description: 'Model 3 description'
-)
-user_1 = User.create!(
-  name: 'Admin',
-  email: 'admin@gmail.com',
-  password: '123456',
-  is_admin: true,
 )
 
 controller_1 = Controller.create!(
-  name: 'Controller 1',
+  name: 'Controlador de prueba.. no pescar...',
   esp32_mac_address: '00:00:00:00:00:01',
-)
-
-# sin usuario para q salga en la vista de controladores disponibles!!
-controller_2 = Controller.create!(
-  name: 'Controller 2',
-  esp32_mac_address: '00:00:00:00:00:02',
 )
 
 controller_3 = Controller.create!(
@@ -61,21 +45,11 @@ controller_3 = Controller.create!(
 
 end
 
-3.times do |i|
-
-  Locker.create!(
-    name: "Locker #{i+1}",
-    description: "Locker #{i+1} description",
-    controller: controller_2
-  )
-
-end
-
+# lockers de controlador ESP
 3.times do |i|
 
   Locker.create!(
     name: "#{i+1}",
-    owner_email: "lucas.reyes.salazar@gmail.com",
     description: "Locker #{i+1} description",
     controller: controller_3
   )
@@ -92,7 +66,6 @@ end
   )
 
   gesture.image.attach(io: File.open(Rails.root.join("app/assets/images/#{i + 1}.png")), filename: "#{i + 1}.png", content_type: 'image/png')
-
 end
 
 blank = Gesture.create!(
@@ -100,7 +73,6 @@ blank = Gesture.create!(
   description: "En Controlador fisico es: 6",
   model: modelo_1
 )
-
 blank.image.attach(io: File.open(Rails.root.join('app/assets/images/blank.png')), filename: "blank.png", content_type: 'image/png')
 
 seven = Gesture.create!(
@@ -108,7 +80,6 @@ seven = Gesture.create!(
   description: "En Controlador fisico es: 7",
   model: modelo_1
 )
-
 seven.image.attach(io: File.open(Rails.root.join('app/assets/images/7.png')), filename: "7.png", content_type: 'image/png')
 
 8.times do |i|
@@ -121,35 +92,7 @@ seven.image.attach(io: File.open(Rails.root.join('app/assets/images/7.png')), fi
 
 end
 
-5.times do |i|
-
-  gesture = Gesture.create!(
-    name: "#{i}",
-    description: "Gesture #{i} description",
-    model: modelo_3
-  )
-
-  gesture.image.attach(io: File.open(Rails.root.join("app/assets/images/#{i + 1}.png")), filename: "#{i + 1}.png", content_type: 'image/png')
-
-end
-
-blank = Gesture.create!(
-  name: "6",
-  description: "En Controlador fisico es: 6",
-  model: modelo_3
-)
-
-blank.image.attach(io: File.open(Rails.root.join('app/assets/images/blank.png')), filename: "blank.png", content_type: 'image/png')
-
-seven = Gesture.create!(
-  name: "7",
-  description: "En Controlador fisico es: 7",
-  model: modelo_3
-)
-
-seven.image.attach(io: File.open(Rails.root.join('app/assets/images/7.png')), filename: "7.png", content_type: 'image/png')
-
-
+# locker openings de prueba
 LockerOpening.create!(
   locker: Locker.last, #del controlador ESP
   opened_at: Time.now - 30.seconds,
@@ -159,7 +102,7 @@ LockerOpening.create!(
 
 LockerOpening.create!(
   locker: Locker.last, #del controlador ESP
-  opened_at: Time.now - 60.seconds,
+  opened_at: Time.now - 90.seconds,
   closed_at: Time.now,
   was_succesful: false
 )

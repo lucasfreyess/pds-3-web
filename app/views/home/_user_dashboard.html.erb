@@ -7,8 +7,6 @@
     
     <div style="text-align: center;">
       <h1>Métricas de tus Casilleros</h1>
-      <br/>
-      <p>no faltan metricas!</p>
     </div>
 
     <br />
@@ -178,15 +176,6 @@
 
       </div>
     </div>
-    
-    <%= button_to "Publicar mensaje al broker MQTT", send_message_path, method: :post, remote: true, class: "btn btn-primary" %>
-
-    <br />
-    <p>
-      Google Client ID: <%= ENV['GOOGLE_CLIENT_ID'] %>
-      <br />
-      Google Client Secret: <%= ENV['GOOGLE_CLIENT_SECRET'] %>
-    </p>
     
   </div>
 <% end %>

@@ -199,7 +199,7 @@ class User < ApplicationRecord
   # para determinar si un usuario normal esta activo
   def is_active
     if !self.is_admin
-      self.last_sign_in_at >= 10.minutes.ago
+      self.current_sign_in_at >= 10.minutes.ago
     end
   end
 

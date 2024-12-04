@@ -15,6 +15,14 @@
 
     <hr />
 
+    <p class="custom-card-text">
+      <strong> Última vez visto: </strong>
+      <% if @user.current_sign_in_at.nil? %>
+        Nunca
+      <% else %>
+        <%= @user.current_sign_in_at.in_time_zone('America/Argentina/Buenos_Aires').strftime("el %d/%m/%Y a las %H:%M:%S") %>
+      <% end %>
+
     <% if @controllers.empty?%>
       <p class="custom-card-text">
         <strong>Este usuario no tiene controladores asignados.</strong>

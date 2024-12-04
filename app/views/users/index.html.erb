@@ -1,8 +1,8 @@
 <div>
   <div style="text-align: center;">
     
-    <% if @users.nil? %>
-      <h1>No existen usuarios.</h1>
+    <% if @users.empty? %>
+      <h1>No existen usuarios registrados.</h1>
     <% else %>
       <h1>Revisa todos los Usuarios!</h1>
     <% end %>

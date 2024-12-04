@@ -16,8 +16,8 @@
         <strong>Dueño:</strong> <%= @locker.owner_email || "No especificado" %><br />
         <hr />
         
-        <strong>Abierto por última vez:</strong> <%= @locker.last_opened_at || "No especificado" %><br />
-        <strong>Cerrado por última vez:</strong> <%= @locker.last_closed_at || "No especificado" %><br />
+        <strong>Abierto por última vez:</strong> <%= @locker.last_opened_at ? @locker.last_opened_at.in_time_zone('America/Argentina/Buenos_Aires').strftime("el %d/%m/%Y a las %H:%M:%S") : "No especificado" %><br />
+        <strong>Cerrado por última vez:</strong> <%= @locker.last_opened_at ? @locker.last_closed_at.in_time_zone('America/Argentina/Buenos_Aires').strftime("el %d/%m/%Y a las %H:%M:%S") : "No especificado" %><br />
         <hr />
       </p>
 
