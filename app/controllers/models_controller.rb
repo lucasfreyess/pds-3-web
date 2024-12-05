@@ -89,7 +89,8 @@ class ModelsController < ApplicationController
   def update
     @model = Model.find(params[:id])
     if @model.update(model_params)
-      @model.set_url(request.host_with_port)
+      new_url = Rails.application.routes.url_helpers.rails_blob_url(@model.model_file, host: request.host_with_port)
+      @model.set_url(new_url)
       flash[:success] = 'Modelo actualizado exitosamente.'
       redirect_to models_path#, notice: 'Modelo actualizado exitosamente.'
     else
