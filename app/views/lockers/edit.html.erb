@@ -14,8 +14,8 @@
     </div>
 
     <%# Opciones de gestos disponibles del modelo del usuario actual %>
-    <% if current_user.model.present? && current_user.model.gestures.any? %>
-      <% gesture_options = current_user.model.gestures.pluck(:name) %>
+    <% if @user.model.present? && @user.model.gestures.any? %>
+      <% gesture_options = @user.model.gestures.pluck(:name) %>
     <% else %>
       <% gesture_options = [] %>
     <% end %>

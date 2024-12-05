@@ -47,7 +47,7 @@ class ModelsController < ApplicationController
     else
       # magia de sql para obtener primero el modelo del usuario!!
       @models = Model.all
-      @models = @models.sort_by { |model| model.id == current_user.model_id ? 0 : 1 }.reverse
+      @models = @models.sort_by { |model| model.id == current_user.model_id ? 0 : 1 }
     end
   end
 

@@ -37,9 +37,7 @@ class LockerMailer < ApplicationMailer
 
     @locker = locker
     @owner = locker.owner_email
-    @locker_opening = locker.locker_openings.last
-    @locker_closure = @locker_opening.locker_closure
-
+    
     # Verifica si el locker tiene un propietario
     if @owner == ""
       return
@@ -47,7 +45,20 @@ class LockerMailer < ApplicationMailer
 
     mail(to: @owner, subject: 'Tu casillero ha sido abierto')
     puts "EMAIL DE APERTURA DE CASILLERO ENVIADO..."
+  end
 
+  def locker_closure_notification(locker)
+      
+    @locker = locker
+    @owner = locker.owner_email
+    
+    # Verifica si el locker tiene un propietario
+    if @owner == ""
+      return
+    end
+
+    mail(to: @owner, subject: 'Tu casillero ha sido cerrado')
+    puts "EMAIL DE CIERRE DE CASILLERO ENVIADO..."
   end
 end
 

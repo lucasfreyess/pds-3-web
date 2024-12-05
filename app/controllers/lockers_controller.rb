@@ -12,6 +12,7 @@ class LockersController < ApplicationController
   # GET /lockers/:id/edit
   def edit
     @locker = Locker.find(params[:id])
+    @user = @locker.controller.user || current_user
   end
 
   # PATCH /lockers/:id

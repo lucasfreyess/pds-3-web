@@ -2,10 +2,12 @@ class Locker < ApplicationRecord
 
   belongs_to :controller, class_name: "Controller", dependent: :destroy
   has_many :locker_openings, class_name: "LockerOpening", dependent: :destroy
+  has_many :locker_closures, class_name: "LockerClosure", dependent: :destroy
 
   # before_create :check_locker_limit
   after_create :set_locker_count
   after_update :send_locker_update_email, if: :owner_or_password_changed?
+  after_update :send_keys_to_mqtt, if: :password_changed?
 
   # el locker viene asociado a un controlador por defecto, por lo que
   # una contraseña deberia ser creada cuando se asocia un usuario al
@@ -35,6 +37,15 @@ class Locker < ApplicationRecord
       errors.add(:base, "Este controlador ya tiene el máximo de 4 casilleros.")
       throw(:abort)  # Cancela la creación del Locker
     end
+  end
+
+  def send_keys_to_mqtt
+    puts "ENVIANDO KEYS AL MQTT!!......"
+    MqttController.send_keys_after_model_update(self.controller)
+  end
+
+  def password_changed?
+    saved_change_to_password?
   end
 
   # Incrementa el locker_count en el controller correspondiente

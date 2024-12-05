@@ -1,5 +1,6 @@
 <p>Hola,</p>
-<p>Te notificamos que tu casillero "<%= @locker.name %>" ha sido abierto a las <%= @locker_opening.opened_at %> y cerrado a las <%= @locker_closure.closed_at %>.</p>
+<p>Te notificamos que tu casillero "<%= @locker.name %>" ha sido abierto <%= @locker.last_opened_at.in_time_zone('America/Argentina/Buenos_Aires').strftime("el %d/%m/%Y a las %H:%M:%S") %>.</p>
 <strong>En el caso en que no hayas sido tú quien abrió el casillero, por favor contactate con el mail remitente.</strong>
 <p>Si fuiste tú quien abrió el casillero, por favor ignora este mensaje.</p>
+<strong>Finalmente, si no te llega un mail notificando la cerradura del casillero en unos minutos, entonces el casillero quedo abierto.</strong>
 <p>Saludos,<br>Equipo 5.</p>
