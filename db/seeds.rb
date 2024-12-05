@@ -43,7 +43,7 @@ controller_3 = Controller.create!(
 4.times do |i|
 
   Locker.create!(
-    name: "Locker #{i+1}",
+    name: "#{i+1}",
     description: "Locker #{i+1} description",
     controller: controller_1
   )
@@ -66,7 +66,7 @@ end
 
   gesture = Gesture.create!(
     name: "#{i}",
-    description: "En Controlador fisico es: #{i + 1}",
+    description: "Representa el gesto #{i + 1}",
     model: modelo_1
   )
 
@@ -75,14 +75,14 @@ end
 
 seven = Gesture.create!(
   name: "5",
-  description: "En Controlador fisico es: el gesto 7",
+  description: "Representa el gesto 7",
   model: modelo_1
 )
 seven.image.attach(io: File.open(Rails.root.join('app/assets/images/7.png')), filename: "7.png", content_type: 'image/png')
 
 blank = Gesture.create!(
   name: "6",
-  description: "En Controlador fisico es: Blank",
+  description: "Ocupado cuando no existe gesto mostrado (Blank).",
   model: modelo_1
 )
 blank.image.attach(io: File.open(Rails.root.join('app/assets/images/blank.png')), filename: "blank.png", content_type: 'image/png')
