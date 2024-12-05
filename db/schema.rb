@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_01_202810) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_04_212211) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -45,7 +45,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_01_202810) do
   create_table "controllers", force: :cascade do |t|
     t.string "name", default: "", null: false
     t.string "esp32_mac_address", default: "", null: false
-    t.datetime "last_seen_at", default: -> { "CURRENT_TIMESTAMP" }
+    t.datetime "last_seen_at"
     t.integer "locker_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -62,13 +62,23 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_01_202810) do
     t.index ["model_id"], name: "index_gestures_on_model_id"
   end
 
+  create_table "locker_closures", force: :cascade do |t|
+    t.bigint "locker_id", null: false
+    t.bigint "locker_opening_id", null: false
+    t.datetime "closed_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.boolean "was_succesful", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["locker_id"], name: "index_locker_closures_on_locker_id"
+    t.index ["locker_opening_id"], name: "index_locker_closures_on_locker_opening_id"
+  end
+
   create_table "locker_openings", force: :cascade do |t|
     t.bigint "locker_id", null: false
     t.datetime "opened_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "was_succesful", default: false
-    t.datetime "closed_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.index ["locker_id"], name: "index_locker_openings_on_locker_id"
   end
 
@@ -125,6 +135,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_01_202810) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "controllers", "users"
   add_foreign_key "gestures", "models"
+  add_foreign_key "locker_closures", "locker_openings"
+  add_foreign_key "locker_closures", "lockers"
   add_foreign_key "locker_openings", "lockers"
   add_foreign_key "lockers", "controllers"
   add_foreign_key "users", "models"

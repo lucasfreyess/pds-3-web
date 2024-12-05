@@ -17,8 +17,13 @@ Model.delete_all
 
 modelo_1 = Model.create!(
   name: 'Modelo del Proyecto',
-  description: 'Model 1 description'
+  description: 'Model 1 description',
+  version: '1.0.0'
 )
+file_path = Rails.root.join('db', 'seeds', 'files', 'person_detection.bin')
+modelo_1.model_file.attach(io: File.open(file_path), filename: 'person_detection.bin', content_type: 'application/octet-stream') # Tipo de contenido para archivos binarios
+puts "Archivo 'person_detection.bin' adjuntado exitosamente."
+
 
 modelo_2 = Model.create!(
   name: 'Modelo de prueba',
@@ -60,27 +65,27 @@ end
 5.times do |i|
 
   gesture = Gesture.create!(
-    name: "Gesture #{i+1}",
-    description: "En Controlador fisico es: #{i}",
+    name: "#{i}",
+    description: "En Controlador fisico es: #{i + 1}",
     model: modelo_1
   )
 
   gesture.image.attach(io: File.open(Rails.root.join("app/assets/images/#{i + 1}.png")), filename: "#{i + 1}.png", content_type: 'image/png')
 end
 
-blank = Gesture.create!(
-  name: "Blank",
-  description: "En Controlador fisico es: 6",
-  model: modelo_1
-)
-blank.image.attach(io: File.open(Rails.root.join('app/assets/images/blank.png')), filename: "blank.png", content_type: 'image/png')
-
 seven = Gesture.create!(
-  name: "Gesture 7",
-  description: "En Controlador fisico es: 7",
+  name: "5",
+  description: "En Controlador fisico es: el gesto 7",
   model: modelo_1
 )
 seven.image.attach(io: File.open(Rails.root.join('app/assets/images/7.png')), filename: "7.png", content_type: 'image/png')
+
+blank = Gesture.create!(
+  name: "6",
+  description: "En Controlador fisico es: Blank",
+  model: modelo_1
+)
+blank.image.attach(io: File.open(Rails.root.join('app/assets/images/blank.png')), filename: "blank.png", content_type: 'image/png')
 
 8.times do |i|
 
@@ -96,15 +101,14 @@ end
 LockerOpening.create!(
   locker: Locker.last, #del controlador ESP
   opened_at: Time.now - 30.seconds,
-  closed_at: Time.now,
   was_succesful: true
 )
 
-LockerOpening.create!(
+LockerClosure.create!(
   locker: Locker.last, #del controlador ESP
-  opened_at: Time.now - 90.seconds,
+  locker_opening: LockerOpening.last,
   closed_at: Time.now,
-  was_succesful: false
+  was_succesful: true
 )
 
 puts 'Seed finished!!'

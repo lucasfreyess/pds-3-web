@@ -6,7 +6,7 @@ class MqttService
       loop do
         begin
           MQTT::Client.connect(host: BROKER_URL, port: 1883, keep_alive: 60) do |client|
-            topic = "controladores/locker/status"
+            topic = "controladores/lockers/status"
             client.subscribe(topic)
 
             puts "Suscrito al topic #{topic}"
@@ -39,10 +39,22 @@ class MqttService
     Rails.logger.info "Tipo de dato del payload: #{payload.class}"
     data = payload.is_a?(String) ? JSON.parse(payload) : payload
 
+    #mensaje = {
+    #  "controller_id": CLIENT_NAME,
+    #  "changed": changed,
+    #  "time": current_time,
+    #  "controller_id": controller_id,
+    #  "locker_id": status
+    #}
+
     esp32_mac_address = data['controller_id']
-    statuses = data['status']      # Estado actual de cada casillero
-    changes = data['changed']      # Índices que indican los casilleros que cambiaron
-    timestamp = Time.parse(data['time'])
+    changed = data['changed']
+    time = Time.parse(data['time'])
+    locker_id = data['locker_id']
+    #statuses = data['status']      # Estado actual de cada casillero
+    #status = data['status']
+    #changes = data['changed']      # Índices que indican los casilleros que cambiaron
+    #timestamp = Time.parse(data['time'])
 
     controller = Controller.find_by(esp32_mac_address: esp32_mac_address)
     # model = Model.find_by(url: model_url)
@@ -55,25 +67,39 @@ class MqttService
     # creo que es mas barato actualizar de a una, en vez de checkear si
     # los datos entregados son distintos a los actuales
 
-    controller.update!(last_seen_at: timestamp) # el mac address no deberia cambiar!!
+    puts "TIME PARSEADO: #{time}"
 
-     changes.each_with_index do |changed, index|
-      next unless changed == 1  # Solo procesa casilleros que cambiaron (indicado con 1)
+    controller.update!(last_seen_at: time) # el mac address no deberia cambiar!!
 
-      locker = controller.lockers[index]
-      next unless locker  # Si no se encuentra el casillero, omite
+    puts "CONTROLLER ACTUALIZADO"
+    #locker = controller.lockers.find_by(name: locker_id)
+
+    process_locker_opening_message({
+      'esp32_mac_address' => esp32_mac_address,
+      'changed' => changed,
+      'time' => time.iso8601,
+      'locker_id' => locker_id,
+      #'status' => statuses[index] == 0 ? 'cerrado' : 'abierto'
+    })
+
+
+    #changes.each_with_index do |changed, index|
+    #  next unless changed == 1  # Solo procesa casilleros que cambiaron (indicado con 1)
+
+    #  locker = controller.lockers[index]
+    #  next unless locker  # Si no se encuentra el casillero, omite
 
       # Actualiza el estado del casillero en la base de datos
-      locker.update!(is_locked: statuses[index] == 0)
+    #  locker.update!(is_locked: statuses[index] == 0)
 
       # Llama a `process_locker_opening_message` para registrar la apertura
-      process_locker_opening_message({
-        'esp32_mac_address' => esp32_mac_address,
-        'locker_id' => locker.name,
-        'time' => timestamp.iso8601,
-        'status' => statuses[index] == 0 ? 'cerrado' : 'abierto'
-      })
-    end
+    #  process_locker_opening_message({
+    #    'esp32_mac_address' => esp32_mac_address,
+    #    'locker_id' => locker.name,
+    #    'time' => timestamp.iso8601,
+    #    'status' => statuses[index] == 0 ? 'cerrado' : 'abierto'
+    #  })
+    #end
 
     Rails.logger.info "Estado del controlador #{esp32_mac_address} y casilleros actualizado exitosamente."
   end
@@ -94,11 +120,13 @@ class MqttService
   def self.process_locker_opening_message(payload)
     esp32_mac_address = payload['esp32_mac_address']
     locker_name = payload['locker_id']
-    timestamp = Time.parse(payload['time'])
-    status = payload['status']
+    time = Time.parse(payload['time'])
+    status = payload['changed']
+
+    puts "STATUS: #{status}"
 
     controller = Controller.find_by(esp32_mac_address: esp32_mac_address)
-    locker = controller&.lockers&.find_by(name: locker_name)
+    locker = controller.lockers.find_by(name: locker_name)
 
     unless controller && locker
       Rails.logger.error "Controller o Locker no encontrados para el mensaje recibido."
@@ -106,14 +134,14 @@ class MqttService
     end
 
     if status == "abierto"
-      LockerOpening.create!(locker: locker, opened_at: timestamp)
+      LockerOpening.create!(locker: locker, opened_at: time, was_succesful: true)
       Rails.logger.info "Apertura de casillero #{locker_name} registrada exitosamente."
     else
       Rails.logger.info "Estado recibido no es de apertura: #{status}"
     end
 
     if status == "cerrado"
-      LockerOpening.create!(locker: locker, closed_at: timestamp)
+      LockerClosure.create!(locker: locker, locker_opening: LockerOpening.last, closed_at: time, was_succesful: true)
       Rails.logger.info "Cerradura de casillero #{locker_name} registrada exitosamente."
     else
       Rails.logger.info "Estado recibido no es de cierre: #{status}"

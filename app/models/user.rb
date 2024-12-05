@@ -115,43 +115,49 @@ class User < ApplicationRecord
   # metodo para usuario normal
   def average_opening_time_last_7_days
     locker_openings = LockerOpening.joins(locker: :controller)
+                                   .joins("INNER JOIN locker_closures ON locker_closures.locker_opening_id = locker_openings.id")
                                    .where(controllers: { user_id: id })
-                                   .where('opened_at >= ?', 7.days.ago)
-                                   .where.not(closed_at: nil)
-
+                                   .where('locker_openings.opened_at >= ?', 7.days.ago)
+                                   .where('locker_closures.was_succesful = ?', true)
+  
     return 0 if locker_openings.empty?
-
-    puts "LOCKER OPENINGS #{locker_openings.inspect}"
-
-    total_time = locker_openings.sum { |opening| opening.closed_at - opening.opened_at }
-    (total_time / locker_openings.size).round(2) # Tiempo promedio en segundos
+  
+    # Calcula el tiempo total directamente en la base de datos
+    total_time = locker_openings.sum("locker_closures.closed_at - locker_openings.opened_at")
+    
+    # Devuelve el tiempo promedio redondeado
+    (total_time / locker_openings.size).round(2)
   end
+  
 
   # Tiempo promedio de apertura por modelo en los últimos 7 días
   def average_opening_time_by_model_last_7_days
     return {} unless self.is_admin
-
+  
     models_with_averages = {}
-
+  
     puts "ACTIVANDOO AVERAGE OPENING TIME BY MODEL"
-
+  
     Model.includes(users: { controllers: { lockers: :locker_openings } }).find_each do |model|
+      # Obtén las aperturas y cierres asociados a los lockers de los usuarios del modelo
       locker_openings = LockerOpening.joins(locker: { controller: :user })
+                                     .joins("INNER JOIN locker_closures ON locker_closures.locker_opening_id = locker_openings.id")
                                      .where(users: { id: model.users.ids })
-                                     .where('opened_at >= ?', 7.days.ago)
-                                     .where.not(closed_at: nil)
-
-      #puts "LOCKER OPENINGS #{locker_openings.inspect}"
-
+                                     .where('locker_openings.opened_at >= ?', 7.days.ago)
+                                     .where('locker_closures.was_succesful = ?', true)
+  
       next if locker_openings.empty?
-
-      total_time = locker_openings.sum { |opening| opening.closed_at - opening.opened_at }
+  
+      # Calcula el tiempo promedio de apertura
+      total_time = locker_openings.sum("locker_closures.closed_at - locker_openings.opened_at")
       average_time = (total_time / locker_openings.size).round(2)
+  
       models_with_averages[model.name] = average_time
     end
-
-    return models_with_averages
+  
+    models_with_averages
   end
+  
 
   # para determinar los modelos con mas aperturas fallidas en los ultimos 7 dias
   # solo se puede acceder si current_user.is_admin

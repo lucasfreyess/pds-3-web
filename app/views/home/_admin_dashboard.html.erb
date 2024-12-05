@@ -146,7 +146,7 @@
         <% if @unique_users_changed_model.any? %>
           <% @unique_users_changed_model.each do |user| %>
             <p class="text-success mb-1">
-              <strong>Usuario:</strong> <%= user.email %>
+              <strong>Usuario:</strong> <%= link_to user.email, user_path(user) %>
             </p>
           <% end %>
         <% else %>

@@ -4,7 +4,7 @@ class CreateControllers < ActiveRecord::Migration[7.2]
       
       t.string :name, null: false, default: ""
       t.string :esp32_mac_address, null: false, default: ""
-      t.datetime :last_seen_at, default: -> { 'CURRENT_TIMESTAMP' }
+      t.datetime :last_seen_at
       t.integer :locker_count, default: 0, null: false
 
       t.timestamps

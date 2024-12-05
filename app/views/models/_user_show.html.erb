@@ -6,7 +6,13 @@
     </h3>
 
     <p class="custom-card-text">
-      <strong>Versión:</strong> <%= @model.version || "No especificada" %><br />
+      <strong>Versión:</strong> 
+      <% if @model.version == "" %>
+        No especificada.
+      <% else %>
+        <%= @model.version %>
+      <% end %>
+      <br />
       <strong>Archivo asociado:</strong> 
       <% if @model.model_file.attached? %>
         Posee un modelo de I.A!

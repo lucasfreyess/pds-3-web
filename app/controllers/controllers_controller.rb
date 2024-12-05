@@ -31,9 +31,8 @@ class ControllersController < ApplicationController
     topic = @controller.esp32_mac_address
     payload = { time: Time.current.strftime('%Y-%m-%d %H:%M:%S') }.to_json
 
-
     @lockers = @controller.lockers.order(:id)
-    @connected = @controller.last_seen_at && (Time.current - @controller.last_seen_at) <= 10.minutes
+    @connected = @controller.last_seen_at.present? && @controller.last_seen_at >= 10.minutes.ago
 
     # si no se hace flash.now entonces el mensaje se muestra en la siguiente vista xd
     if @connected
@@ -45,30 +44,70 @@ class ControllersController < ApplicationController
 
   require 'timeout'
 
+  # POST /controllers/:id/verify_connection
+  #def verify_connection
+  #  @controller = Controller.find(params[:id])
+
+  #  begin
+      # Establecer un timeout de 10 segundos
+  #    Timeout.timeout(50) do
+        # Publicar el mensaje MQTT para verificar conexión
+  #      Rails.logger.debug "Llamando a MqttController#connection para el controlador #{@controller.id}"
+  #      MqttController.new.connection(@controller)
+  #      MqttController.new.subscribe_to_controller_connection(@controller)
+  #    end
+
+  #    flash[:info] = "Verificando conexión..."
+  #    head :ok
+  #  rescue Timeout::Error
+  #    Rails.logger.error "Error de conexión MQTT: Tiempo de espera excedido"
+  #    flash[:danger] = "El controlador tardó demasiado en responder. Verifica su estado."
+  #    head :ok
+  #  rescue StandardError => e
+  #    Rails.logger.error "Error inesperado: #{e.message}"
+  #    flash[:danger] = "Ocurrió un error inesperado. Intenta nuevamente más tarde."
+  #    head :ok
+  #  end
+
+  #  respond_to do |format|
+  #    format.js
+  #  end
+
+  #end
+
   def verify_connection
     @controller = Controller.find(params[:id])
-
+  
     begin
-      # Establecer un timeout de 10 segundos
       Timeout.timeout(50) do
-        # Publicar el mensaje MQTT para verificar conexión
+        # Publicar mensaje para iniciar la conexión
         Rails.logger.debug "Llamando a MqttController#connection para el controlador #{@controller.id}"
         MqttController.new.connection(@controller)
         MqttController.new.subscribe_to_controller_connection(@controller)
+  
+        # Esperar a que se actualice el controlador
+        while @controller.last_seen_at.nil? || @controller.last_seen_at < 5.seconds.ago
+          Rails.logger.debug "Esperando respuesta del controlador #{@controller.id}..."
+          sleep(1) # Pausa breve antes de volver a verificar
+          @controller.reload # Recargar el controlador desde la base de datos
+        end
+  
+        Rails.logger.info "Conexión verificada exitosamente para el controlador #{@controller.id}"
+        flash[:info] = "Conexión verificada exitosamente."
       end
-
-      flash[:info] = "Verificando conexión..."
-      head :ok
+  
+      redirect_to controller_path(@controller) # Redirige de vuelta a la vista `show`
     rescue Timeout::Error
       Rails.logger.error "Error de conexión MQTT: Tiempo de espera excedido"
       flash[:danger] = "El controlador tardó demasiado en responder. Verifica su estado."
-      head :ok
+      redirect_to controller_path(@controller) # Redirige incluso si falla
     rescue StandardError => e
       Rails.logger.error "Error inesperado: #{e.message}"
       flash[:danger] = "Ocurrió un error inesperado. Intenta nuevamente más tarde."
-      head :ok
+      redirect_to controller_path(@controller)
     end
   end
+  
 
   # GET /controllers/new
   def new
@@ -185,7 +224,7 @@ class ControllersController < ApplicationController
 
   def controller_params
     # params.permit(:name, :esp_32_mac_address)
-    params.permit(:name, :esp32_mac_address, :locker_count)
+    params.permit(:name, :esp32_mac_address, :locker_count, :user_id)
     # params.require(:controller).permit(:name, :esp32_mac_address, :locker_count)
   end
 

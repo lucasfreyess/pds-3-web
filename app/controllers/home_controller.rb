@@ -15,7 +15,8 @@ class HomeController < ApplicationController
       @most_used_model = current_user.most_used_model_last_7_days
       
       @unique_users_changed_model = current_user.unique_users_changed_model_last_7_days
-      
+      puts "UNIQUE USERS CHANGED MODEL #{@unique_users_changed_model}"
+
       @average_opening_time_by_model_last_7_days = current_user.average_opening_time_by_model_last_7_days
       puts "AVERAGE OPENING TIME BY MODEL #{@average_opening_time_by_model_last_7_days}"
       

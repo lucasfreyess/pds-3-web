@@ -46,6 +46,9 @@ class Controller < ApplicationRecord
 
   # determina si el controlador esta activo
   def is_active
+    if self.last_seen_at.nil?
+      return false
+    end
     self.last_seen_at >= 10.minutes.ago
   end
 

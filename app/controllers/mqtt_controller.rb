@@ -262,14 +262,18 @@ class MqttController < ApplicationController
       # Construir el tópico usando el esp32_mac_address del controlador
       topic = "#{controller.esp32_mac_address}"  # Aquí usamos el MAC address como parte del tópico
     
+
       # Suscribirse al tópico dinámico
       client.subscribe(topic)
+      Rails.logger.info "Escuchando los mensajes de status en el tópico #{topic}"
       begin
         client.get do |topic, message|
           Rails.logger.info "Mensaje recibido en el tópico #{topic}: #{message}"
     
           begin
             data = JSON.parse(message) # Parsear el mensaje JSON
+
+            Rails.logger.info("Mensaje JSON parseado: #{data.inspect}")
     
             # Validar que el sender sea "ESP"
             if data["sender"] == "ESP"

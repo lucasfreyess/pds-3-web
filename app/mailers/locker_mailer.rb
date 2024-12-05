@@ -38,6 +38,7 @@ class LockerMailer < ApplicationMailer
     @locker = locker
     @owner = locker.owner_email
     @locker_opening = locker.locker_openings.last
+    @locker_closure = @locker_opening.locker_closure
 
     # Verifica si el locker tiene un propietario
     if @owner == ""
