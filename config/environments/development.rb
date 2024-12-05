@@ -102,5 +102,6 @@ Rails.application.configure do
   config.hosts << "pds3equipo5.duckdns.org"
 
   config.web_console.permissions = '177.154.174.218' # pal digital ocean
+  config.web_console.permissions = '200.73.69.220'
 
 end
